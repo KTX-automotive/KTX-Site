@@ -54,7 +54,6 @@ window.KTXC_init=function(root,BASE,initLang){
     var sc=FILM[cur];
     shots.forEach(function(s,i){s.classList.toggle('on',i===sc.img)});
     var card=$('fcard');
-    card.classList.toggle('logo-on',cur===FILM.length-1);
     if(!keep){card.classList.remove('on');void card.offsetWidth}
     $('fsmall').textContent=sc.small[lang];
     $('fbig').textContent=sc.big[lang];
@@ -62,31 +61,37 @@ window.KTXC_init=function(root,BASE,initLang){
     requestAnimationFrame(function(){card.classList.add('on')});
     segs.forEach(function(s,i){s.firstChild.style.width=i<cur?'100%':(i>cur?'0%':s.firstChild.style.width)});
   }
-  var AUD={fr:[],en:[]},DUR={"fr":[4.6,6.09,8.44,7.97,11.31,10.11,4.73,7.13],"en":[4.08,5.46,5.75,6.58,7.42,10.03,4.21,4.96]};for(var k=1;k<=8;k++){AUD.fr.push(BASE+'assets/audio/fr'+k+'.mp3');AUD.en.push(BASE+'assets/audio/en'+k+'.mp3')}
-  var au=new Audio();au.preload='auto';var sound=false,started=false,held=false;
-  function sd(){return Math.max(5,DUR[lang][cur]+1.1)}
-  function voice(){if(!sound)return;au.pause();au.src=AUD[lang][cur];started=false;held=false}
-  function go(i){cur=(i+FILM.length)%FILM.length;elapsed=0;t0=performance.now();renderFilm(false);voice()}
+  var AUD={fr:BASE+'assets/audio/film-fr.mp3',en:BASE+'assets/audio/film-en.mp3'};
+  var TS={fr:[0,6.1,12.54,20.5,28.91,38.11,48.08,52.87,62.15],en:[0,6.15,12.72,20.66,28.26,37.24,47.08,51.86,60.47]};
+  var au=new Audio();au.preload='auto';var sound=false,clock=0,pend=false;
+  function T(){return TS[lang]}
+  function sceneAt(t){var a=T();for(var i=a.length-2;i>0;i--)if(t>=a[i])return i;return 0}
+  function seek(t){if(au.readyState>=1){try{au.currentTime=t}catch(e){}}else{au.addEventListener('loadedmetadata',function f(){au.removeEventListener('loadedmetadata',f);try{au.currentTime=t}catch(e){}})}}
+  function startAudio(){if(au.paused&&!pend){pend=true;au.play().then(function(){pend=false},function(){pend=false})}}
+  function go(i){cur=(i+FILM.length)%FILM.length;clock=T()[cur];if(sound)seek(clock);renderFilm(false)}
   function tick(){
     cancelAnimationFrame(raf);
     var loop=function(now){
-      var run=playing&&visible;
-      if(run){elapsed+=(now-t0)/1000}
+      var fr=fbox.getBoundingClientRect();visible=fr.bottom>innerHeight*0.25&&fr.top<innerHeight*0.75&&!document.hidden;
+      var run=playing&&visible,a=T(),end=a[a.length-1];
+      if(sound){
+        if(run){startAudio();if(!au.paused)clock=au.currentTime;if(au.ended){clock=0;seek(0);startAudio()}}
+        else if(!au.paused)au.pause();
+      }else if(run){clock+=(now-t0)/1000;if(clock>=end)clock=0}
       t0=now;
-      if(sound&&au.src){if(run){if(!started){started=true;au.play().catch(function(){})}else if(held){held=false;au.play().catch(function(){})}}else if(!au.paused&&!au.ended){au.pause();held=true}}
-      var d=sd();segs[cur].firstChild.style.width=Math.min(100,elapsed/d*100)+'%';
-      if(elapsed>=d){go(cur+1)}
+      var k=sceneAt(clock);if(k!==cur){cur=k;renderFilm(false)}
+      segs[cur].firstChild.style.width=Math.max(0,Math.min(100,(clock-a[cur])/(a[cur+1]-a[cur])*100))+'%';
       if(!dead)raf=requestAnimationFrame(loop)};
     t0=performance.now();raf=requestAnimationFrame(loop);
   }
   var pbtn=$('fplay'),sbtn=$('fsound');
   function labels(){pbtn.textContent=playing?(lang==='fr'?'PAUSE':'PAUSE'):(lang==='fr'?'LECTURE':'PLAY');sbtn.textContent=sound?(lang==='fr'?'SON ACTIVÉ':'SOUND ON'):(lang==='fr'?'ACTIVER LE SON':'TURN SOUND ON');sbtn.setAttribute('aria-pressed',sound)}
-  pbtn.addEventListener('click',function(){playing=!playing;if(!playing)au.pause();labels()});
-  sbtn.addEventListener('click',function(){sound=!sound;if(sound){playing=true;go(cur)}else{au.pause()}labels()});
-  var filmLang=function(){labels();if(sound)go(cur)};
+  pbtn.addEventListener('click',function(){playing=!playing;if(!playing)au.pause();else if(sound)startAudio();labels()});
+  sbtn.addEventListener('click',function(){sound=!sound;if(sound){playing=true;au.src=AUD[lang];go(0);startAudio()}else{au.pause()}labels()});
+  var filmLang=function(){labels();if(sound){var k=cur;au.pause();au.src=AUD[lang];go(k);startAudio()}};
   playing=!reduce;labels();
   renderFilm(false);tick();
-  var vio=new IntersectionObserver(function(es){visible=es[0].isIntersecting},{threshold:.35});vio.observe($('filmbox'));
+  var fbox=$('filmbox');
 
   // Apparitions
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);count(e.target)}})},{rootMargin:'0px 0px -12% 0px'});
@@ -118,5 +123,5 @@ window.KTXC_init=function(root,BASE,initLang){
   addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);
   if(reduce)reveals.forEach(function(s){s.classList.add('show')});
   applyLang();
-  return {setLang:function(l){l=l==='en'?'en':'fr';if(l!==lang){lang=l;applyLang()}},destroy:function(){dead=true;cancelAnimationFrame(raf);au.pause();au.src='';vio.disconnect();io.disconnect();removeEventListener('scroll',onScroll);removeEventListener('resize',onScroll)}};
+  return {setLang:function(l){l=l==='en'?'en':'fr';if(l!==lang){lang=l;applyLang()}},destroy:function(){dead=true;cancelAnimationFrame(raf);au.pause();au.src='';io.disconnect();removeEventListener('scroll',onScroll);removeEventListener('resize',onScroll)}};
 };
