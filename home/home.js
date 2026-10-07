@@ -54,7 +54,7 @@ window.KTXC_init=function(root,BASE,initLang){
     var sc=FILM[cur];
     shots.forEach(function(s,i){s.classList.toggle('on',i===sc.img)});
     var card=$('fcard');
-    card.classList.toggle('logo-on',cur===1||cur===FILM.length-1);
+    card.classList.toggle('logo-on',cur===FILM.length-1);
     if(!keep){card.classList.remove('on');void card.offsetWidth}
     $('fsmall').textContent=sc.small[lang];
     $('fbig').textContent=sc.big[lang];
@@ -63,9 +63,9 @@ window.KTXC_init=function(root,BASE,initLang){
     segs.forEach(function(s,i){s.firstChild.style.width=i<cur?'100%':(i>cur?'0%':s.firstChild.style.width)});
   }
   var AUD={fr:[],en:[]},DUR={"fr":[4.6,6.09,8.44,7.97,11.31,10.11,4.73,7.13],"en":[4.08,5.46,5.75,6.58,7.42,10.03,4.21,4.96]};for(var k=1;k<=8;k++){AUD.fr.push(BASE+'assets/audio/fr'+k+'.mp3');AUD.en.push(BASE+'assets/audio/en'+k+'.mp3')}
-  var au=new Audio();au.preload='auto';var sound=false;
+  var au=new Audio();au.preload='auto';var sound=false,started=false,held=false;
   function sd(){return Math.max(5,DUR[lang][cur]+1.1)}
-  function voice(){if(!sound)return;au.pause();au.src=AUD[lang][cur];au.currentTime=0;if(playing&&visible)au.play().catch(function(){})}
+  function voice(){if(!sound)return;au.pause();au.src=AUD[lang][cur];started=false;held=false}
   function go(i){cur=(i+FILM.length)%FILM.length;elapsed=0;t0=performance.now();renderFilm(false);voice()}
   function tick(){
     cancelAnimationFrame(raf);
@@ -73,7 +73,7 @@ window.KTXC_init=function(root,BASE,initLang){
       var run=playing&&visible;
       if(run){elapsed+=(now-t0)/1000}
       t0=now;
-      if(sound){if(run&&au.paused&&elapsed<DUR[lang][cur]-.05&&au.src){au.currentTime=Math.min(elapsed,DUR[lang][cur]);au.play().catch(function(){})} if(!run&&!au.paused)au.pause()}
+      if(sound&&au.src){if(run){if(!started){started=true;au.play().catch(function(){})}else if(held){held=false;au.play().catch(function(){})}}else if(!au.paused&&!au.ended){au.pause();held=true}}
       var d=sd();segs[cur].firstChild.style.width=Math.min(100,elapsed/d*100)+'%';
       if(elapsed>=d){go(cur+1)}
       if(!dead)raf=requestAnimationFrame(loop)};
