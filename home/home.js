@@ -14,7 +14,7 @@ window.KTXC_init=function(root,BASE,initLang){
     {img:1,small:{fr:"Dès l’inscription",en:"From sign-up"},big:{fr:"1 interlocuteur. 2 créneaux.",en:"1 contact. 2 slots."},cap:{fr:"Un seul interlocuteur : KTX. Dès l’inscription, vos deux créneaux de l’année sont réservés, printemps et automne.",en:"One point of contact: KTX. The day you sign up, both your slots for the year are booked, spring and fall."},d:10},
     {img:2,small:{fr:"Au garage partenaire",en:"At the partner garage"},big:{fr:"Un scan. 0 $ sur place.",en:"One scan. $0 on site."},cap:{fr:"Le jour venu, vous vous présentez chez un garage partenaire près de chez vous. Un scan de code QR, et c’est tout : rien à payer sur place.",en:"On the day, you drive to a partner garage near you. One QR code scan, and that’s it: nothing to pay on site."},d:13},
     {img:3,small:{fr:"Forfait Sérénité",en:"Serenity plan"},big:{fr:"Vos pneus, gardés.",en:"Your tires, stored."},cap:{fr:"Avec le forfait Sérénité, KTX garde vos pneus hors saison, suivis par code QR. Après chaque visite, vous recevez un rapport avec photos.",en:"With the Serenity plan, KTX stores your tires off-season, tracked by QR code. After every visit, you get a report with photos."},d:10},
-    {img:4,small:{fr:"Forfait Fin de bail",en:"Fin de bail plan"},big:{fr:"Jusqu’à 400 $ par jante.*",en:"Up to $400 per wheel.*"},cap:{fr:"Vous êtes en location ? Au retour, une jante abîmée peut coûter jusqu’à 400 $. Le forfait Fin de bail documente l’état de vos roues, photos datées à l’appui.",en:"Leasing? At lease return, one damaged wheel can cost up to $400. The Fin de bail plan documents your wheels’ condition, with dated photos."},d:12},
+    {img:4,small:{fr:"Forfait Fin de bail",en:"End of Lease plan"},big:{fr:"Jusqu’à 400 $ par jante.*",en:"Up to $400 per wheel.*"},cap:{fr:"Vous êtes en location ? Au retour, une jante abîmée peut coûter jusqu’à 400 $. Le forfait Fin de bail documente l’état de vos roues, photos datées à l’appui.",en:"Leasing? At the end of your lease, one damaged wheel can cost up to $400. The End of Lease plan documents your wheels’ condition, with dated photos."},d:12},
     {img:0,small:{fr:"Toutes marques, tous modèles",en:"All makes, all models"},big:{fr:"De l’ouest de l’île à Vaudreuil-Soulanges.",en:"West Island to Vaudreuil-Soulanges."},cap:{fr:"Toutes marques, tous modèles, de l’ouest de l’île jusqu’à Vaudreuil-Soulanges.",en:"All makes, all models, from the West Island to Vaudreuil-Soulanges."},d:8},
     {img:1,small:{fr:"Lancement avril 2027",en:"Launching April 2027"},big:{fr:"ktxautomotive.com",en:"ktxautomotive.com"},cap:{fr:"Lancement en avril 2027. Inscrivez-vous à la liste d’attente sur ktxautomotive.com.",en:"Launching April 2027. Join the waitlist at ktxautomotive.com."},d:8}
   ];
@@ -62,7 +62,7 @@ window.KTXC_init=function(root,BASE,initLang){
     segs.forEach(function(s,i){s.firstChild.style.width=i<cur?'100%':(i>cur?'0%':s.firstChild.style.width)});
   }
   var AUD={fr:BASE+'assets/audio/film-fr.mp3',en:BASE+'assets/audio/film-en.mp3'};
-  var TS={fr:[0,6.1,12.54,20.5,28.91,38.11,48.08,52.87,62.15],en:[0,6.19,13.04,21.11,28.84,37.95,48.19,53.11,61.68]};
+  var TS={fr:[0,6.1,12.54,20.5,28.91,38.11,48.08,52.87,62.15],en:[0,6.09,12.72,20.52,28.11,37.1,47.35,52.11,60.68]};
   var au=new Audio();au.preload='auto';var sound=false,clock=0,pend=false;
   function T(){return TS[lang]}
   function sceneAt(t){var a=T();for(var i=a.length-2;i>0;i--)if(t>=a[i])return i;return 0}
