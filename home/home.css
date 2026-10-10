@@ -86,7 +86,7 @@
 #ktxc .film .ctrl button:hover{background:rgba(255,255,255,.26)}
 #ktxc .film .ctrl .snd{background:var(--accent);color:#111}#ktxc .film .ctrl .snd[aria-pressed=true]{background:rgba(255,255,255,.14);color:var(--white)}
 #ktxc .film .ctrl button:focus-visible,#ktxc .film .bar span:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-@media(max-width:600px){#ktxc .film{border-radius:16px}#ktxc .film .cap{display:none}}
+@media(max-width:600px){#ktxc .film{border-radius:16px;aspect-ratio:4/5}#ktxc .film .cap{display:block;bottom:34px;padding:0 6%;font-size:14px;line-height:1.45;min-height:0}#ktxc .film .card{padding:0 7% 22%}#ktxc .film .card .big{font-size:clamp(26px,8vw,40px)}}
 #ktxc .filmnote{margin:18px auto 0;width:min(1240px,calc(100% - 32px));color:var(--dim);font-size:13px}
 
 /* Chiffres */
