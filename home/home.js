@@ -21,6 +21,7 @@ window.KTXC_init=function(root,BASE,initLang){
 
   // Textes FR/EN
   function applyLang(){
+    $$('a[data-path]').forEach(function(a){a.setAttribute('href',(lang==='en'?'/en':'')+a.getAttribute('data-path'))});
     $$('[data-fr]').forEach(function(el){el.textContent=el.getAttribute('data-'+lang)});
     $$('img[data-alt-en]').forEach(function(el){
       if(!el.dataset.altFr)el.dataset.altFr=el.alt; el.alt=lang==='en'?el.dataset.altEn:el.dataset.altFr});
