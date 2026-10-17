@@ -8,3 +8,7 @@ Fichiers de la page d’accueil de ktxautomotive.com, chargés par le composant 
 - `home/assets/` : photos, logo et voix (FR et EN, voix Amélie)
 
 Servi par jsDelivr : `https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@<commit>/home/`
+
+## Marque KORR (17 oct. 2026)
+Textes passés à KORR / korrauto.com. Les identifiants techniques `#ktxc` et `window.KTXC_init` restent inchangés : le composant Framer les appelle.
+À refaire : la narration audio (`assets/audio/film-*.mp3`) dit encore « KTX ».

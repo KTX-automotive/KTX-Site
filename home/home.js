@@ -1,4 +1,4 @@
-/* KTX Automotive — page d’accueil cinéma. window.KTXC_init(root, base, lang) -> {setLang, destroy} */
+/* KORR — page d’accueil cinéma. window.KTXC_init(root, base, lang) -> {setLang, destroy} */
 
 window.KTXC_init=function(root,BASE,initLang){
   var lang=initLang==='en'?'en':'fr';var $=function(id){return root.querySelector('#'+id)};var $$=function(q){return root.querySelectorAll(q)};var dead=false;
@@ -10,13 +10,13 @@ window.KTXC_init=function(root,BASE,initLang){
   };
   var FILM=[
     {img:0,small:{fr:"Chaque automne",en:"Every fall"},big:{fr:"La même cohue.",en:"The same rush."},cap:{fr:"Chaque automne, c’est la même course : trouver un garage avant le 1er décembre.",en:"Every fall, it’s the same race: finding a garage before December 1st."},d:7},
-    {img:1,small:{fr:"KTX Automotive",en:"KTX Automotive"},big:{fr:"Votre conciergerie automobile.",en:"Your automotive concierge."},cap:{fr:"KTX Automotive, c’est votre conciergerie automobile. On s’occupe de vos pneus, toute l’année.",en:"KTX Automotive is your automotive concierge. We take care of your tires, all year long."},d:10},
-    {img:1,small:{fr:"Dès l’inscription",en:"From sign-up"},big:{fr:"1 interlocuteur. 2 créneaux.",en:"1 contact. 2 slots."},cap:{fr:"Un seul interlocuteur : KTX. Dès l’inscription, vos deux créneaux de l’année sont réservés, printemps et automne.",en:"One point of contact: KTX. The day you sign up, both your slots for the year are booked, spring and fall."},d:10},
+    {img:1,small:{fr:"KORR",en:"KORR"},big:{fr:"Votre conciergerie automobile.",en:"Your automotive concierge."},cap:{fr:"KORR, c’est votre conciergerie automobile. On s’occupe de vos pneus, toute l’année.",en:"KORR is your automotive concierge. We take care of your tires, all year long."},d:10},
+    {img:1,small:{fr:"Dès l’inscription",en:"From sign-up"},big:{fr:"1 interlocuteur. 2 créneaux.",en:"1 contact. 2 slots."},cap:{fr:"Un seul interlocuteur : KORR. Dès l’inscription, vos deux créneaux de l’année sont réservés, printemps et automne.",en:"One point of contact: KORR. The day you sign up, both your slots for the year are booked, spring and fall."},d:10},
     {img:2,small:{fr:"Au garage partenaire",en:"At the partner garage"},big:{fr:"Un scan. 0 $ sur place.",en:"One scan. $0 on site."},cap:{fr:"Le jour venu, vous vous présentez chez un garage partenaire près de chez vous. Un scan de code QR, et c’est tout : rien à payer sur place.",en:"On the day, you drive to a partner garage near you. One QR code scan, and that’s it: nothing to pay on site."},d:13},
-    {img:3,small:{fr:"Forfait Sérénité",en:"Serenity plan"},big:{fr:"Vos pneus, gardés.",en:"Your tires, stored."},cap:{fr:"Avec le forfait Sérénité, KTX garde vos pneus hors saison, suivis par code QR. Après chaque visite, vous recevez un rapport avec photos.",en:"With the Serenity plan, KTX stores your tires off-season, tracked by QR code. After every visit, you get a report with photos."},d:10},
+    {img:3,small:{fr:"Forfait Sérénité",en:"Serenity plan"},big:{fr:"Vos pneus, gardés.",en:"Your tires, stored."},cap:{fr:"Avec le forfait Sérénité, KORR garde vos pneus hors saison, suivis par code QR. Après chaque visite, vous recevez un rapport avec photos.",en:"With the Serenity plan, KORR stores your tires off-season, tracked by QR code. After every visit, you get a report with photos."},d:10},
     {img:4,small:{fr:"Forfait Fin de bail",en:"End of Lease plan"},big:{fr:"Jusqu’à 400 $ par jante.*",en:"Up to $400 per wheel.*"},cap:{fr:"Vous êtes en location ? Au retour, une jante abîmée peut coûter jusqu’à 400 $. Le forfait Fin de bail documente l’état de vos roues, photos datées à l’appui.",en:"Leasing? At the end of your lease, one damaged wheel can cost up to $400. The End of Lease plan documents your wheels’ condition, with dated photos."},d:12},
     {img:0,small:{fr:"Toutes marques, tous modèles",en:"All makes, all models"},big:{fr:"De Montréal à Vaudreuil-Soulanges.",en:"Montréal to Vaudreuil-Soulanges."},cap:{fr:"Toutes marques, tous modèles, du centre-ville de Montréal jusqu’à Vaudreuil-Soulanges.",en:"All makes, all models, from downtown Montréal to Vaudreuil-Soulanges."},d:8},
-    {img:1,small:{fr:"Lancement avril 2027",en:"Launching April 2027"},big:{fr:"ktxautomotive.com",en:"ktxautomotive.com"},cap:{fr:"Lancement en avril 2027. Inscrivez-vous à la liste d’attente sur ktxautomotive.com.",en:"Launching April 2027. Join the waitlist at ktxautomotive.com."},d:8}
+    {img:1,small:{fr:"Lancement avril 2027",en:"Launching April 2027"},big:{fr:"korrauto.com",en:"korrauto.com"},cap:{fr:"Lancement en avril 2027. Inscrivez-vous à la liste d’attente sur korrauto.com.",en:"Launching April 2027. Join the waitlist at korrauto.com."},d:8}
   ];
 
   // Textes FR/EN
