@@ -14,7 +14,7 @@ import { h, Fragment, useLang, lang, loc, tr } from "./KorrI18n.tsx"
 void [h, Fragment]
 
 const API = "https://ktx-api.fly.dev"
-const IMG = "https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@334823287ad833e8fa688d4026784b7fe357b2bc/home/assets/"
+const IMG = "https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@2f2658995424b21ebf9e85362e1eab8a415d3ac6/home/assets/"
 const ACCENT = "#3FBF9F"
 const FONT =
     "https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap"
@@ -1124,10 +1124,11 @@ function Reveal({ image, alt, eyebrow, title, text, flip }: { image: string; alt
 /** Inséré par KorrBento, sur l'accueil seulement. */
 // ───── Film d'accueil : la publicité KORR (77 s, voix off et musique) ─────
 
-const FILM_VIDEO = IMG + "video/korr-pub-fr.mp4"
+const FILM_VIDEO = { fr: IMG + "video/korr-pub-fr.mp4", en: IMG + "video/korr-pub-en.mp4" }
 const FILM_POSTER = IMG + "video/korr-pub-poster.webp"
 
 function KorrFilm() {
+    const L = lang() === "en" ? "en" : "fr"
     return (
         <section id="film" style={{ ...section(96), textAlign: "center" as const }}>
             <div style={wrap}>
@@ -1136,7 +1137,8 @@ function KorrFilm() {
             </div>
             <div style={{ margin: "48px auto 0", maxWidth: 1200, borderRadius: 28, overflow: "hidden", background: "#000", aspectRatio: "16 / 9" }}>
                 <video
-                    src={FILM_VIDEO}
+                    key={L}
+                    src={FILM_VIDEO[L]}
                     poster={FILM_POSTER}
                     controls
                     playsInline
