@@ -292,6 +292,8 @@ const D: Record<string, string> = {
     "Aucun travail additionnel (alignement, pneus neufs, freins) n’est fait sans une soumission écrite que vous avez approuvée.": "No additional work (alignment, new tires, brakes) is done without a written quote you have approved.",
     "Vous recevez les photos et une évaluation écrite. Aucun travail additionnel (alignement, pneus neufs, freins) n’est fait sans une soumission que vous avez approuvée.": "You get the photos and a written assessment. No additional work (alignment, new tires, brakes) is done without a quote you have approved.",
     "Comment je me rends au garage et j’en reviens ?": "How do I get to the garage and back?",
+    "En Uber. Le trajet aller-retour est inclus avec Prestige, et offert à l’acte avec les autres forfaits.": "By Uber. The round trip is included with Prestige and available per trip with the other plans.",
+    "Vos deux créneaux, réservés d’avance.": "Both of your slots, booked ahead.",
     "En Uber. Le trajet aller-retour est inclus avec Prestige et Entreprises, et offert à l’acte avec les autres forfaits.": "By Uber. The round trip is included with Prestige and Business, and available per trip with the other plans.",
     "Combien coûtent les forfaits ?": "How much do the plans cost?",
     "Les prix seront dévoilés en mars 2027, taxes en sus. Les membres de la liste d’attente les recevront en premier.": "Prices will be revealed in March 2027, plus tax. Waitlist members will get them first.",
