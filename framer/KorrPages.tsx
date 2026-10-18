@@ -1,3 +1,6 @@
+/** @jsxRuntime classic */
+/** @jsx h */
+/** @jsxFrag Fragment */
 // KORR — pages du site (contenu repris de l'ancien site KTX, aux couleurs KORR).
 // Rendu par KorrPrivacy (KorrFooter.tsx) selon sa propriété « Page » : une page Framer = une instance.
 // Fichier volontairement long : il regroupe le contenu de 8 pages et leurs formulaires publics.
@@ -6,6 +9,7 @@ import KorrNav from "./KorrNav.tsx"
 import KorrPlans from "./KorrPlans.tsx"
 import KorrFAQ from "./KorrFAQ.tsx"
 import KorrWaitlist from "./KorrWaitlist.tsx"
+import { h, Fragment, useLang, lang, loc, tr } from "./KorrI18n.tsx"
 
 const API = "https://ktx-api.fly.dev"
 const IMG = "https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@e87f5174f751b60bb4873fd180eea45c3df05085/home/assets/"
@@ -387,7 +391,7 @@ function QuoteForm() {
             await post("/v1/product-quotes", {
                 produit: product, saison: tires ? season : undefined, type_mags: product === "ensemble" ? wheelKind : undefined,
                 ...vehicleBody(v), dimension: size && size !== "inconnue" ? size : undefined, quantite: qty, prenom: first || undefined,
-                membre: member, courriel: email, consentement: ok ? "oui" : "", langue: "fr", website: hp,
+                membre: member, courriel: email, consentement: ok ? "oui" : "", langue: lang(), website: hp,
             })
             setStatus({ ok: true, msg: "Demande reçue. Vous recevrez votre prix par courriel, en général dans un jour ouvrable." })
         } catch (err: any) {
@@ -489,7 +493,7 @@ function RimForm() {
         try {
             const r = await post("/v1/rim-estimates", {
                 vehicule_loue: "non", photos, nb_jantes: count, marque: v.makeName || undefined, modele: v.modelName || undefined,
-                annee: v.year || undefined, prenom: first || undefined, courriel: email, consentement: ok ? "oui" : "", langue: "fr", website: hp,
+                annee: v.year || undefined, prenom: first || undefined, courriel: email, consentement: ok ? "oui" : "", langue: lang(), website: hp,
             })
             setStatus({ ok: true, msg: `Demande ${r.code || ""} reçue. Votre fourchette arrive par courriel, en général dans un jour ouvrable.` })
             setPhotos([])
@@ -583,7 +587,7 @@ function LeaseForm() {
         try {
             const r = await post("/v1/lease-check", {
                 marque: v.makeName, modele: v.modelName || undefined, annee: v.year || undefined, fin_bail: end,
-                ...answers, prenom: first || undefined, courriel: email, consentement: ok ? "oui" : "", langue: "fr", website: hp,
+                ...answers, prenom: first || undefined, courriel: email, consentement: ok ? "oui" : "", langue: lang(), website: hp,
             })
             setResult(r)
         } catch (err: any) {
@@ -652,7 +656,7 @@ function VerifyForm() {
             if (r.status === 404) return setRes({ ok: false, msg: "Aucun rapport ne correspond à ce code." })
             if (!r.ok) throw new Error()
             const d = await r.json()
-            const when = d.createdAt ? new Date(d.createdAt).toLocaleDateString("fr-CA", { day: "numeric", month: "long", year: "numeric" }) : ""
+            const when = d.createdAt ? new Date(d.createdAt).toLocaleDateString(lang() === "en" ? "en-CA" : "fr-CA", { day: "numeric", month: "long", year: "numeric" }) : ""
             const veh = [d.make, d.model, d.year].filter(Boolean).join(" ")
             setRes(
                 d.verified
@@ -692,7 +696,7 @@ function PartnerForm() {
         setBusy(true)
         setStatus(null)
         try {
-            await post("/v1/partners/applications", { ...f, baies: f.baies || undefined, source: "korrauto.com/garages", consentement: ok ? "oui" : "", texte_consentement: consentText, langue: "fr", website: hp })
+            await post("/v1/partners/applications", { ...f, baies: f.baies || undefined, source: "korrauto.com/garages", consentement: ok ? "oui" : "", texte_consentement: tr(consentText), langue: lang(), website: hp })
             setStatus({ ok: true, msg: "Candidature reçue. Nous vous écrirons avant l’évaluation de décembre 2026." })
         } catch (err: any) {
             setStatus({ msg: err.message })
@@ -742,7 +746,7 @@ export function WinterAlert() {
         setBusy(true)
         setStatus(null)
         try {
-            await post("/v1/alerts/winter", { courriel: email, code_postal: cp || undefined, marque: make || undefined, consentement: ok ? "oui" : "", texte_consentement: consentText, langue: "fr", website: hp })
+            await post("/v1/alerts/winter", { courriel: email, code_postal: cp || undefined, marque: make || undefined, consentement: ok ? "oui" : "", texte_consentement: tr(consentText), langue: lang(), website: hp })
             setStatus({ ok: true, msg: "C’est noté. Confirmez votre adresse dans le courriel que nous venons d’envoyer." })
         } catch (err: any) {
             setStatus({ msg: err.message })
@@ -1117,6 +1121,7 @@ function Reveal({ image, alt, eyebrow, title, text, flip }: { image: string; alt
 
 /** Inséré par KorrBento, sur l'accueil seulement. */
 export function HomeExtras() {
+    useLang()
     useInter()
     const nums: [string, string][] = [
         ["2", "créneaux réservés dès l’inscription, automne et printemps"],
@@ -1164,6 +1169,7 @@ export function HomeExtras() {
 
 /** Inséré par KorrAudience, sur l'accueil seulement : rappel du 1er décembre et appel final. */
 export function HomeClosing() {
+    useLang()
     useInter()
     return (
         <div style={{ width: "100%", background: "#050505", fontFamily: "Inter, sans-serif" }}>
@@ -1204,6 +1210,7 @@ export function KorrPageNav() {
 
 /** Contenu complet d'une page : navigation, contenu, liste d'attente (cible des boutons « #liste-attente »). */
 export function KorrPageContent({ page }: { page: PageKey }) {
+    useLang()
     useInter()
     const Body = RENDER[page] || Fonctionnement
     return (

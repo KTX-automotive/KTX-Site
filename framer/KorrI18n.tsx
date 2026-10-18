@@ -1,0 +1,630 @@
+// KORR — version anglaise du site.
+// Chaque composant appelle useLang() puis crée ses éléments avec h() (pragma JSX classique) :
+// en anglais, h() traduit les textes et les attributs (alt, placeholder, aria-label…) avec le dictionnaire
+// ci-dessous et préfixe les liens internes par /en. En français, h() = createElement, rien ne change.
+import { createElement, Fragment as ReactFragment } from "react"
+import { useLocaleInfo } from "framer"
+
+export type Lang = "fr" | "en"
+let LANG: Lang = "fr"
+
+/** Langue active de la page (localisation Framer). À appeler en tête de chaque composant exporté. */
+export function useLang(): Lang {
+    let code = "fr"
+    try {
+        const info: any = useLocaleInfo()
+        code = info?.activeLocale?.code || info?.activeLocale?.slug || "fr"
+    } catch {
+        code = "fr"
+    }
+    LANG = String(code).toLowerCase().startsWith("en") ? "en" : "fr"
+    return LANG
+}
+export const lang = (): Lang => LANG
+
+/** Lien interne dans la langue active : « /forfaits » → « /en/forfaits ». */
+export function loc(href: string): string {
+    if (LANG !== "en" || typeof href !== "string") return href
+    if (!href.startsWith("/") || href.startsWith("//") || href === "/en" || href.startsWith("/en/") || href.startsWith("/en#")) return href
+    if (href === "/") return "/en"
+    if (href.startsWith("/#")) return "/en" + href.slice(1)
+    return "/en" + href
+}
+
+const D: Record<string, string> = {
+    // ── Navigation, pied de page ──
+    "Fonctionnement": "How it works",
+    "Forfaits": "Plans",
+    "Pneus et mags": "Tires & wheels",
+    "Fin de bail": "Lease return",
+    "Entreprises": "Business",
+    "FAQ": "FAQ",
+    "Liste d’attente": "Waitlist",
+    "KORR, accueil": "KORR, home",
+    "Menu": "Menu",
+    "Comment ça marche": "How it works",
+    "Entreprises & flottes": "Business & fleets",
+    "Garages partenaires": "Partner garages",
+    "Contact": "Contact",
+    "Confidentialité (Loi 25)": "Privacy (Law 25)",
+    "Confidentialité": "Privacy",
+    "Conciergerie roues et pneus. Du centre-ville de Montréal à Vaudreuil-Soulanges.": "Wheel and tire concierge. From downtown Montréal to Vaudreuil-Soulanges.",
+    "Prix taxes en sus. Lancement prévu en avril 2027.": "Prices before tax. Launch planned for April 2027.",
+    "Rejoindre la liste d’attente": "Join the waitlist",
+
+    // ── Accueil : hero, étapes, service ──
+    "Le 1er décembre arrive. Pas pour vous.": "December 1 is coming. Not for you.",
+    "Vos pneus. Réglés pour l’année.": "Your tires. Sorted for the year.",
+    "Deux changements de pneus réservés d’avance, vos pneus entreposés et suivis, un rapport après chaque visite. Lancement en avril 2027.": "Two tire changes booked in advance, your tires stored and tracked, a report after every visit. Launching April 2027.",
+    "Voir les forfaits": "See the plans",
+    "Conciergerie roues et pneus · Du centre-ville de Montréal à Vaudreuil-Soulanges": "Wheel and tire concierge · From downtown Montréal to Vaudreuil-Soulanges",
+    "Obligation en vigueur jusqu’au 15 mars": "Winter tires required until March 15",
+    "Activer le son": "Turn sound on",
+    "Couper le son": "Turn sound off",
+    "Son activé": "Sound on",
+    "Trois étapes. Puis plus rien à gérer.": "Three steps. Then nothing left to manage.",
+    "Vous vous inscrivez": "You sign up",
+    "Choisissez votre forfait. Vos deux créneaux, automne et printemps, sont réservés immédiatement dans un garage partenaire de votre secteur.": "Choose your plan. Your two slots, fall and spring, are booked right away at a partner garage in your area.",
+    "On vous rappelle": "We remind you",
+    "Trois semaines avant l’échéance du 1er décembre, vous recevez votre rendez-vous et le compte à rebours de votre secteur.": "Three weeks before the December 1 deadline, you get your appointment and your area’s countdown.",
+    "Vous scannez, c’est fait": "You scan, it’s done",
+    "Au garage, vous scannez votre code QR. Le service est validé, rien à payer sur place. Votre rapport arrive sur votre téléphone.": "At the garage, you scan your QR code. The service is confirmed, nothing to pay on site. Your report arrives on your phone.",
+    "Le service": "The service",
+    "Vous n’appelez plus jamais un garage pour vos pneus.": "You never call a garage about your tires again.",
+    "Janv.": "Jan.", "Févr.": "Feb.", "Mars": "Mar.", "Avr.": "Apr.", "Avr. ✓": "Apr. ✓", "Mai": "May", "Juin": "Jun.",
+    "Juil.": "Jul.", "Août": "Aug.", "Sept.": "Sep.", "Oct.": "Oct.", "Oct. ✓": "Oct. ✓", "Nov.": "Nov.", "Déc.": "Dec.",
+    "Changements de saison réservés": "Seasonal changes booked",
+    "Vos deux créneaux, automne et printemps, sont réservés dès votre inscription dans un garage partenaire près de chez vous. Plus de course aux rendez-vous en novembre.": "Your two slots, fall and spring, are booked as soon as you sign up, at a partner garage near you. No more scrambling for appointments in November.",
+    "Validation par code QR": "QR code check-in",
+    "Vous scannez votre code au garage. Le service est validé. Rien à payer au comptoir.": "You scan your code at the garage. The service is confirmed. Nothing to pay at the counter.",
+    "Sortie": "Out", "Entrée": "In", "Pneus d’été": "Summer tires", "Pneus d’hiver": "Winter tires",
+    "Lavés et étiquetés": "Washed and labelled",
+    "Lot 4/4": "Set 4/4",
+    "Entreposage suivi": "Tracked storage",
+    "Pneus lavés, étiquetés, rangés en entrepôt sécurisé. Chaque entrée et sortie est scannée et datée.": "Tires washed, labelled and kept in a secure warehouse. Every check-in and check-out is scanned and dated.",
+    "Profondeur des crampons": "Tread depth",
+    "Exemple": "Example",
+    "Pneus": "Tires",
+    "Jantes": "Wheels",
+    "Photos datées": "Dated photos",
+    "Rapport après chaque visite": "Report after every visit",
+    "Sur votre téléphone : profondeur des crampons, photos datées de vos pneus, état de vos jantes.": "On your phone: tread depth, dated photos of your tires, the condition of your wheels.",
+    "avant le 1er décembre": "to December 1",
+    "Rappels et compte à rebours": "Reminders and countdown",
+    "Un rappel trois semaines avant l’échéance du 1er décembre, avec le compte à rebours de votre secteur.": "A reminder three weeks before the December 1 deadline, with your area’s countdown.",
+    "Fin de l’obligation des pneus d’hiver": "End of the winter tire requirement",
+    "Compte à rebours": "Countdown",
+
+    // ── Accueil : chiffres, photos, 400 $, rappel, appel final ──
+    "créneaux réservés dès l’inscription, automne et printemps": "slots booked when you sign up, fall and spring",
+    "seul interlocuteur : KORR, du rappel au rapport": "single point of contact: KORR, from reminder to report",
+    "à payer au garage, un scan de code QR suffit": "to pay at the garage, a QR code scan is all it takes",
+    "jours d’avance pour agir avant un retour de location": "days’ head start before a lease return",
+    "Entreposage suivi par code QR": "Storage tracked by QR code",
+    "Vos pneus dorment ici.": "Your tires sleep here.",
+    "Lavés, étiquetés, rangés. Chaque entrée et chaque sortie est datée. Plus de pneus dans le garage ni sur le balcon du condo.": "Washed, labelled, stored. Every check-in and check-out is dated. No more tires in the garage or on the condo balcony.",
+    "Garages partenaires sélectionnés": "Selected partner garages",
+    "Nos garages font le travail.": "Our garages do the work.",
+    "Un réseau choisi du centre-ville de Montréal jusqu’à Vaudreuil-Soulanges. Votre créneau est bloqué bien avant novembre. KORR coordonne tout, vous arrivez à l’heure dite.": "A hand-picked network from downtown Montréal to Vaudreuil-Soulanges. Your slot is locked in well before November. KORR coordinates everything; you just show up on time.",
+    "Un scan. C’est réglé.": "One scan. Done.",
+    "Rien à payer sur place. Après la visite, votre rapport arrive sur votre téléphone : profondeur des pneus, photos datées, état des jantes.": "Nothing to pay on site. After the visit, your report arrives on your phone: tread depth, dated photos, wheel condition.",
+    "Forfait Fin de bail": "Lease Return plan",
+    "Une éraflure peut coûter ça au retour.*": "One scuff can cost that at lease return.*",
+    "KORR documente vos jantes à chaque changement et les inspecte 60 jours avant la restitution. Vous avez le temps d’agir, et un dossier daté en cas de désaccord.": "KORR documents your wheels at every change and inspects them 60 days before you return the vehicle. You have time to act, and a dated file if there is a dispute.",
+    "Faire le diagnostic gratuit": "Take the free check",
+    "* Par jante, selon la grille de retour d’un constructeur allemand. Ne remplace pas l’inspection du loueur et ne garantit pas l’absence de frais.": "* Per wheel, based on a German automaker’s lease-return chart. Does not replace the lessor’s inspection and does not guarantee you will avoid charges.",
+    "Pneus d’hiver obligatoires · 1er décembre": "Winter tires required · December 1",
+    "jours": "days",
+    "Avant la cohue, un rappel.": "Before the rush, a reminder.",
+    "Au Québec, les pneus d’hiver sont obligatoires du 1er décembre au 15 mars. Chaque automne, les garages débordent les deux dernières semaines. Recevez un rappel trois semaines avant.": "In Québec, winter tires are required from December 1 to March 15. Every fall, garages are swamped in the last two weeks. Get a reminder three weeks ahead.",
+    "Courriel *": "Email *",
+    "Courriel": "Email",
+    "Code postal": "Postal code",
+    "Marque du véhicule": "Vehicle make",
+    "J’accepte de recevoir de KORR un rappel avant le 1er décembre et des nouvelles du lancement. Désinscription en tout temps.": "I agree to receive a reminder from KORR before December 1 and launch news. Unsubscribe at any time.",
+    "Activer mon rappel": "Turn on my reminder",
+    "C’est noté. Confirmez votre adresse dans le courriel que nous venons d’envoyer.": "Got it. Confirm your address in the email we just sent.",
+    "Lancement avril 2027": "Launching April 2027",
+    "La prochaine cohue, vous la regardez passer.": "The next rush, you watch it go by.",
+    "Inscription gratuite et sans engagement. Accès prioritaire à la prévente de mars 2027.": "Free, no-commitment sign-up. Priority access to the March 2027 presale.",
+
+    // ── Forfaits ──
+    "Forfaits annuels": "Annual plans",
+    "Deux changements de pneus réservés d’avance, toutes marques, du centre-ville de Montréal à Vaudreuil-Soulanges. Choisissez jusqu’où on s’occupe du reste.": "Two tire changes booked in advance, all makes, from downtown Montréal to Vaudreuil-Soulanges. Choose how much of the rest we handle.",
+    "Essentiel": "Essential",
+    "Votre place est déjà réservée.": "Your spot is already booked.",
+    "Prix dévoilé en mars 2027": "Price revealed in March 2027",
+    "Par année, 2 saisons · taxes en sus": "Per year, 2 seasons · plus tax",
+    "2 changements de pneus par an": "2 tire changes per year",
+    "2 créneaux réservés dès l’inscription": "2 slots booked when you sign up",
+    "Validation par code QR, rien à payer au garage": "QR code check-in, nothing to pay at the garage",
+    "Entreposage et jantes à la carte": "Storage and wheels à la carte",
+    "Choisir Essentiel": "Choose Essential",
+    "Recommandé": "Recommended",
+    "Sérénité": "Serenity",
+    "Vos pneus ne dorment plus dans votre garage.": "Your tires no longer sleep in your garage.",
+    "Tout Essentiel, plus :": "Everything in Essential, plus:",
+    "Entreposage annuel suivi par code QR": "Year-round storage tracked by QR code",
+    "Inspection et rapport photo à chaque changement": "Inspection and photo report at every change",
+    "Rappels prioritaires avant le 1er décembre": "Priority reminders before December 1",
+    "Prix membre sur pneus, jantes et réparations": "Member pricing on tires, wheels and repairs",
+    "Choisir Sérénité": "Choose Serenity",
+    "Tout inclus": "All inclusive",
+    "Prestige": "Prestige",
+    "Vous n’attendez plus. Nulle part.": "No more waiting. Anywhere.",
+    "Tout Sérénité, plus :": "Everything in Serenity, plus:",
+    "Priorité absolue sur les rendez-vous": "Top priority on appointments",
+    "Uber aller-retour pendant le service": "Uber round trip during the service",
+    "1 réparation de jante par an (plafonnée au contrat)": "1 wheel repair per year (capped by contract)",
+    "Tarif préférentiel sur l’alignement": "Preferred rate on alignment",
+    "Choisir Prestige": "Choose Prestige",
+    "Locataires": "Leasing",
+    "Rendez votre voiture sans mauvaise surprise.": "Return your car without bad surprises.",
+    "À la remise d’un véhicule loué, une jante égratignée ou des pneus trop usés se paient au prix du constructeur. On documente l’état de vos jantes et de vos pneus à chaque changement, et on inspecte votre véhicule 60 jours avant la remise : vous avez le temps de corriger.": "When you return a leased vehicle, a scuffed wheel or worn tires are billed at the automaker’s price. We document your wheels and tires at every change and inspect your vehicle 60 days before return, so you have time to fix things.",
+    "Réserver ma place": "Reserve my spot",
+    "Inspection complète 60 jours avant la remise": "Full inspection 60 days before return",
+    "Rapport photo et vidéo daté": "Dated photo and video report",
+    "Remise à neuf de jusqu’à 4 jantes": "Refinishing of up to 4 wheels",
+    "1 jeu de 4 pneus et 2 changements avec entreposage": "1 set of 4 tires and 2 changes with storage",
+    "Rappels à 60 et 30 jours de la remise": "Reminders 60 and 30 days before return",
+    "Dossier de preuve daté en cas de litige": "Dated evidence file in case of a dispute",
+    "15 % de rabais membre sur les jantes": "15% member discount on wheels",
+    "Carrosserie, pare-brise : coordination sur soumission": "Body work, windshield: coordinated on quote",
+    "Ne remplace pas l’inspection du bailleur et ne garantit pas l’absence de frais à la remise. Un deuxième jeu de pneus est en sus.": "Does not replace the lessor’s inspection and does not guarantee you will avoid return charges. A second set of tires is extra.",
+    "Comparer tous les détails": "Compare all details",
+    "Changements de pneus par an": "Tire changes per year",
+    "Créneaux réservés dès l’inscription": "Slots booked at sign-up",
+    "Validation par code QR, sans paiement au garage": "QR code check-in, no payment at the garage",
+    "À la carte": "À la carte",
+    "Entreposage annuel suivi par QR": "Year-round storage tracked by QR",
+    "Inspection et rapport à chaque changement": "Inspection and report at every change",
+    "Standard": "Standard",
+    "+ 60 et 30 jours avant la remise": "+ 60 and 30 days before return",
+    "Rappels avant le 1er décembre": "Reminders before December 1",
+    "Prioritaires": "Priority",
+    "15 % sur les jantes": "15% on wheels",
+    "Prix membre jantes et réparations": "Member pricing on wheels and repairs",
+    "1 jeu de 4 inclus": "1 set of 4 included",
+    "Prix membre": "Member price",
+    "Jusqu’à 4 jantes": "Up to 4 wheels",
+    "Réparation ou remise à neuf de jante": "Wheel repair or refinishing",
+    "1 par an (plafonnée)": "1 per year (capped)",
+    "Priorité sur les rendez-vous": "Priority on appointments",
+    "Uber aller-retour au garage": "Uber round trip to the garage",
+    "Arrive en 2028": "Coming in 2028",
+    "Entretien": "Maintenance",
+    "Forfait annuel · s’ajoute à votre forfait pneus. Offert aux membres dès l’automne 2028, prix selon la marque et l’année.": "Annual plan · added to your tire plan. Available to members from fall 2028, priced by make and year.",
+    "1 changement d’huile par année, aux normes du constructeur (ou 1 entretien de véhicule électrique)": "1 oil change per year, to the automaker’s standards (or 1 electric-vehicle service)",
+    "Inspection des freins à chaque changement de pneus (2 par année)": "Brake inspection at every tire change (2 per year)",
+    "Vérification des liquides": "Fluid check",
+    "Historique d’entretien daté, gardé par KORR": "Dated service history, kept by KORR",
+    "Réparations de freins sur soumission écrite que vous approuvez, rabais membre appliqué": "Brake repairs on a written quote you approve, member discount applied",
+    "Le travail est fait par un garage spécialisé ou un concessionnaire partenaire. Indiquez votre intérêt sur la liste d’attente.": "The work is done by a specialized garage or partner dealership. Let us know you’re interested on the waitlist.",
+
+    // ── Entreprises et garages (accueil et pages) ──
+    "Toute votre flotte en hiver. Sans un seul appel.": "Your whole fleet on winter tires. Without a single call.",
+    "Chaque véhicule a son rendez-vous réservé, planifié en dehors des pointes d’octobre et d’avril.": "Every vehicle has its own booked appointment, scheduled outside the October and April peaks.",
+    "Portail entreprise : véhicules, rendez-vous et historique": "Business portal: vehicles, appointments and history",
+    "Service au garage partenaire, ou sur votre site par un partenaire sous-traitant": "Service at a partner garage, or at your site by a subcontracted partner",
+    "Une seule facture consolidée, payée d’avance": "One consolidated invoice, paid in advance",
+    "Rapport de conformité pour toute la flotte": "Compliance report for the whole fleet",
+    "Parlons de votre flotte": "Let’s talk about your fleet",
+    "Des clients réservés des semaines à l’avance.": "Customers booked weeks in advance.",
+    "KORR remplit les plages que vous choisissez. Vous faites le travail, le client scanne son code QR, vous êtes payé.": "KORR fills the time slots you choose. You do the work, the customer scans their QR code, you get paid.",
+    "Volume prévisible, périodes creuses remplies": "Predictable volume, slow periods filled",
+    "Réservations, rappels et facturation gérés par KORR": "Bookings, reminders and billing handled by KORR",
+    "Payé le jour même, dès le scan QR de fin de service": "Paid the same day, as soon as the end-of-service QR scan is done",
+    "Travaux additionnels sur soumission approuvée par le client": "Additional work on a quote approved by the customer",
+    "Devenir partenaire": "Become a partner",
+    "Entreprises et flottes": "Business and fleets",
+    "Toute la flotte, sans gérer un seul garage.": "The whole fleet, without managing a single garage.",
+    "Créneaux réservés par véhicule, entreposage, une seule facture et un rapport de conformité. Planifié hors des pointes d’octobre et d’avril.": "Slots booked per vehicle, storage, a single invoice and a compliance report. Scheduled outside the October and April peaks.",
+    "PORTAIL": "PORTAL",
+    "Portail entreprise centralisé": "Centralized business portal",
+    "Tous vos véhicules, leurs créneaux et leur historique au même endroit.": "All your vehicles, their slots and their history in one place.",
+    "SERVICE": "SERVICE",
+    "Au garage ou sur votre site": "At the garage or at your site",
+    "Au garage partenaire de votre secteur, ou sur votre site par un partenaire sous-traitant, selon le secteur et la taille de la flotte.": "At a partner garage in your area, or at your site by a subcontracted partner, depending on the area and fleet size.",
+    "FACTURATION": "BILLING",
+    "Une facture, payée d’avance": "One invoice, paid in advance",
+    "Une seule facture consolidée pour toute la flotte, réglée avant la saison.": "A single consolidated invoice for the whole fleet, paid before the season.",
+    "CONFORMITÉ": "COMPLIANCE",
+    "Rapport de conformité": "Compliance report",
+    "L’état des pneus de chaque véhicule, daté, pour vos obligations du 1er décembre.": "The dated tire condition of every vehicle, for your December 1 obligations.",
+    "Parlons de votre flotte.": "Let’s talk about your fleet.",
+    "Indiquez le nombre de véhicules sur la liste d’attente : nous vous écrivons avant la prévente de mars 2027.": "Enter your number of vehicles on the waitlist: we’ll write to you before the March 2027 presale.",
+    "Vous êtes un garage ?": "Are you a garage?",
+    "Des clients planifiés des semaines d’avance.": "Customers scheduled weeks ahead.",
+    "KORR remplit vos plages disponibles avec des membres déjà réservés et vous paie le jour même. Vous faites ce que vous faites le mieux.": "KORR fills your open slots with members who are already booked and pays you the same day. You do what you do best.",
+    "Volume prévisible": "Predictable volume",
+    "Des voitures planifiées d’avance, réparties sur les plages que vous choisissez. Vous remplissez vos creux, pas vos pics.": "Cars scheduled in advance, spread over the slots you choose. You fill your slow times, not your peaks.",
+    "Zéro prise de rendez-vous": "Zero appointment booking",
+    "KORR gère la réservation, les rappels, la relation client et la facturation client.": "KORR handles booking, reminders, customer relations and customer billing.",
+    "Payé le jour même": "Paid the same day",
+    "Le scan du code QR de fin de service valide le travail : les services validés avant 17 h sont payés le jour même.": "The end-of-service QR scan confirms the work: services confirmed before 5 p.m. are paid the same day.",
+    "Travaux additionnels": "Additional work",
+    "Alignement, pneus neufs, freins : sur soumission écrite approuvée par le client.": "Alignment, new tires, brakes: on a written quote approved by the customer.",
+    "Rejoignez le réseau": "Join the network",
+    "Devenir garage partenaire.": "Become a partner garage.",
+    "Nous sélectionnons quelques garages indépendants et réseaux partenaires par secteur, du centre-ville de Montréal jusqu’à Vaudreuil-Soulanges. Les candidatures sont évaluées en décembre 2026.": "We select a few independent garages and partner networks per area, from downtown Montréal to Vaudreuil-Soulanges. Applications are reviewed in December 2026.",
+    "Entreprise *": "Company *",
+    "Votre nom *": "Your name *",
+    "Téléphone": "Phone",
+    "Type": "Type",
+    "Garage indépendant": "Independent garage",
+    "Concessionnaire": "Dealership",
+    "Atelier de jantes": "Wheel shop",
+    "Esthétique automobile": "Auto detailing",
+    "Autre": "Other",
+    "Nombre de baies": "Number of bays",
+    "Services offerts": "Services offered",
+    "Pneus, alignement, freins…": "Tires, alignment, brakes…",
+    "Message": "Message",
+    "J’accepte que KORR conserve ces renseignements pour évaluer ma candidature et me contacter à ce sujet.": "I agree that KORR may keep this information to review my application and contact me about it.",
+    "Envoyer ma candidature": "Send my application",
+    "Candidature reçue. Nous vous écrirons avant l’évaluation de décembre 2026.": "Application received. We’ll write to you before the December 2026 review.",
+
+    // ── FAQ ──
+    "Questions fréquentes": "Frequently asked questions",
+    "Tout ce qu’il faut savoir.": "Everything you need to know.",
+    "Ce qu’on nous demande.": "What people ask us.",
+    "Quand le service commence-t-il ?": "When does the service start?",
+    "Le lancement est prévu en avril 2027. Inscrivez-vous à la liste d’attente pour réserver votre place et être averti en premier.": "Launch is planned for April 2027. Join the waitlist to reserve your spot and be the first to know.",
+    "Est-ce que KORR change mes pneus ?": "Does KORR change my tires?",
+    "Non. KORR réserve et coordonne. Le travail est fait par un garage partenaire, qui en assume la responsabilité.": "No. KORR books and coordinates. The work is done by a partner garage, which is responsible for it.",
+    "Pourquoi pas directement chez un garage ?": "Why not go straight to a garage?",
+    "En octobre et en novembre, les créneaux disparaissent. Avec KORR, vos dates sont réservées dès l’inscription, vos pneus sont entreposés et votre historique reste au même endroit.": "In October and November, slots disappear. With KORR, your dates are booked when you sign up, your tires are stored and your history stays in one place.",
+    "Quels secteurs sont desservis ?": "Which areas are served?",
+    "Du centre-ville de Montréal à Vaudreuil-Soulanges, par un réseau de garages partenaires.": "From downtown Montréal to Vaudreuil-Soulanges, through a network of partner garages.",
+    "Du centre-ville de Montréal à Vaudreuil-Soulanges pour la première saison, par un réseau de garages partenaires. La liste sera publiée avant la prévente.": "From downtown Montréal to Vaudreuil-Soulanges for the first season, through a network of partner garages. The list will be published before the presale.",
+    "Est-ce que je paie au garage ?": "Do I pay at the garage?",
+    "Non. Vous scannez votre code QR sur place : le service est validé et réglé par votre forfait. Rien à payer au comptoir.": "No. You scan your QR code on site: the service is confirmed and covered by your plan. Nothing to pay at the counter.",
+    "Mon véhicule est-il admissible ?": "Is my vehicle eligible?",
+    "Oui, toutes les marques et tous les modèles sont acceptés.": "Yes, all makes and models are accepted.",
+    "Où sont entreposés mes pneus ?": "Where are my tires stored?",
+    "Avec les forfaits Sérénité et Prestige, vos pneus sont lavés, étiquetés et rangés dans un entrepôt sécurisé. Chaque entrée et chaque sortie est scannée et datée.": "With the Serenity and Prestige plans, your tires are washed, labelled and kept in a secure warehouse. Every check-in and check-out is scanned and dated.",
+    "Et si le garage trouve un autre problème ?": "What if the garage finds another problem?",
+    "Aucun travail additionnel (alignement, pneus neufs, freins) n’est fait sans une soumission écrite que vous avez approuvée.": "No additional work (alignment, new tires, brakes) is done without a written quote you have approved.",
+    "Vous recevez les photos et une évaluation écrite. Aucun travail additionnel (alignement, pneus neufs, freins) n’est fait sans une soumission que vous avez approuvée.": "You get the photos and a written assessment. No additional work (alignment, new tires, brakes) is done without a quote you have approved.",
+    "Comment je me rends au garage et j’en reviens ?": "How do I get to the garage and back?",
+    "En Uber. Le trajet aller-retour est inclus avec Prestige et Entreprises, et offert à l’acte avec les autres forfaits.": "By Uber. The round trip is included with Prestige and Business, and available per trip with the other plans.",
+    "Combien coûtent les forfaits ?": "How much do the plans cost?",
+    "Les prix seront dévoilés en mars 2027, taxes en sus. Les membres de la liste d’attente les recevront en premier.": "Prices will be revealed in March 2027, plus tax. Waitlist members will get them first.",
+    "La liste d’attente m’engage-t-elle ?": "Does the waitlist commit me to anything?",
+    "Non. Elle vous donne un accès prioritaire à la prévente. Vous pouvez vous désinscrire en tout temps.": "No. It gives you priority access to the presale. You can unsubscribe at any time.",
+    "Éliminez-vous les frais de fin de bail ?": "Do you eliminate lease-return charges?",
+    "Non, personne ne peut le promettre. Le forfait Fin de bail documente l’état de votre véhicule et prévoit une inspection 60 jours avant la restitution, pour vous laisser le temps d’agir.": "No, nobody can promise that. The Lease Return plan documents your vehicle’s condition and includes an inspection 60 days before return, to give you time to act.",
+    "Quelles sont les dates de l’obligation au Québec ?": "What are the requirement dates in Québec?",
+    "Les pneus d’hiver sont obligatoires du 1er décembre au 15 mars.": "Winter tires are required from December 1 to March 15.",
+    "Une question qui n’est pas ici ?": "A question that isn’t here?",
+
+    // ── Liste d'attente ──
+    "Réservez votre place pour avril 2027.": "Reserve your spot for April 2027.",
+    "Les membres de la liste d’attente reçoivent les prix en premier, en mars 2027, et choisissent leurs créneaux avant tout le monde.": "Waitlist members get prices first, in March 2027, and choose their slots before everyone else.",
+    "Prénom": "First name",
+    "Forfait qui vous intéresse": "Plan you’re interested in",
+    "Entreprise / flotte": "Business / fleet",
+    "Garage partenaire": "Partner garage",
+    "Je ne sais pas encore": "Not sure yet",
+    "J’accepte que KORR utilise ces renseignements pour m’informer du lancement et de ses forfaits, conformément à sa politique de confidentialité. Je peux retirer mon consentement en tout temps.": "I agree that KORR may use this information to tell me about its launch and plans, in line with its privacy policy. I can withdraw my consent at any time.",
+    "Merci.": "Thank you.",
+    "Entrez un courriel valide.": "Enter a valid email.",
+    "Ce courriel ne semble pas valide.": "This email doesn’t look valid.",
+    "Cochez la case de consentement pour continuer.": "Check the consent box to continue.",
+    "Patientez une seconde : la vérification anti-robot se termine.": "One moment: the anti-bot check is finishing.",
+    "L’envoi a échoué. Réessayez dans un instant.": "Sending failed. Try again in a moment.",
+    "La vérification anti-robot a échoué. Rechargez la page et réessayez.": "The anti-bot check failed. Reload the page and try again.",
+    "Trop d’envois en peu de temps. Réessayez dans quelques minutes.": "Too many submissions in a short time. Try again in a few minutes.",
+    "Votre place est réservée. Confirmez votre inscription avec le lien reçu par courriel : vous y trouverez aussi votre lien de parrainage.": "Your spot is reserved. Confirm your sign-up with the link we emailed you: you’ll also find your referral link there.",
+    "Entreprise": "Business",
+    "Garage": "Garage",
+    "Particulier": "Individual",
+    "Membre exclusif · 200 places": "Exclusive member · 200 spots",
+    "Accès prioritaire à la prévente de mars 2027": "Priority access to the March 2027 presale",
+    "Tarif exclusif conservé tant que vous restez membre": "Exclusive rate kept for as long as you stay a member",
+    "Aucun paiement avant la prévente": "No payment before the presale",
+    "Pour obtenir le statut": "To get the status",
+    "Adhérer à la prévente de mars 2027": "Join the March 2027 presale",
+    "Parrainer 2 personnes qui s’inscrivent à la liste d’attente": "Refer 2 people who join the waitlist",
+    "Un paiement manqué ou un abonnement en pause retire automatiquement le statut : la place passe au suivant sur la liste.": "A missed payment or a paused subscription removes the status automatically: the spot goes to the next person on the list.",
+
+    // ── Fonctionnement ──
+    "Un seul interlocuteur : KORR. Nos garages partenaires font le travail.": "One point of contact: KORR. Our partner garages do the work.",
+    "KORR anticipe vos créneaux, garde vos pneus, coordonne le garage partenaire et documente chaque service.": "KORR books your slots ahead, stores your tires, coordinates the partner garage and documents every service.",
+    "Inscrivez-vous": "Sign up",
+    "Choisissez votre forfait. Un paiement, l’année réglée.": "Choose your plan. One payment, the year is handled.",
+    "Réservez vos 2 créneaux": "Book your 2 slots",
+    "Automne et printemps, fixés dès l’inscription, pas en novembre avec tout le monde.": "Fall and spring, set when you sign up, not in November with everyone else.",
+    "Présentez votre code QR": "Show your QR code",
+    "Au garage partenaire de votre secteur. Un scan valide la visite, rien à payer sur place.": "At the partner garage in your area. One scan confirms the visit, nothing to pay on site.",
+    "Recevez votre rapport": "Get your report",
+    "Mesures de vos pneus, photos datées, état des freins et des jantes, sur votre téléphone.": "Your tire measurements, dated photos, brake and wheel condition, on your phone.",
+    "KORR Trace": "KORR Trace",
+    "Chaque visite laisse une trace. Datée, mesurée, vérifiable.": "Every visit leaves a record. Dated, measured, verifiable.",
+    "Après chaque visite, vous recevez votre rapport KORR Trace : l’état de vos pneus et de vos jantes, mesuré et photographié au garage partenaire, avec un code que n’importe qui peut vérifier.": "After every visit, you get your KORR Trace report: the condition of your tires and wheels, measured and photographed at the partner garage, with a code anyone can verify.",
+    "Vérifier un rapport": "Verify a report",
+    "Disponible pour les membres dès le lancement d’avril 2027.": "Available to members from the April 2027 launch.",
+    "Pneus mesurés": "Tires measured",
+    "L’usure et l’âge de chaque pneu, relevés au garage partenaire à chaque visite.": "The wear and age of each tire, recorded at the partner garage at every visit.",
+    "Serrage consigné": "Torque recorded",
+    "Le serrage de vos roues est inscrit au rapport par le garage partenaire.": "Your wheel torque is entered in the report by the partner garage.",
+    "Revente et fin de bail": "Resale and lease return",
+    "Un historique daté, avec photos, que l’acheteur de votre véhicule ou votre loueur peut vérifier par code.": "A dated history, with photos, that your vehicle’s buyer or your lessor can verify by code.",
+    "Pourquoi réserver d’avance": "Why book ahead",
+    "Le 1er décembre ne se déplace pas. Votre rendez-vous, oui.": "December 1 doesn’t move. Your appointment can.",
+    "Au Québec, les pneus d’hiver sont obligatoires du 1er décembre au 15 mars. Chaque automne, tout le monde appelle son garage la même semaine. Avec KORR, votre créneau est fixé bien avant.": "In Québec, winter tires are required from December 1 to March 15. Every fall, everyone calls their garage the same week. With KORR, your slot is set well before.",
+    "Vos créneaux KORR d’automne": "Your KORR fall slots",
+    "La cohue": "The rush",
+    "Pneus d’hiver obligatoires · 1er déc. au 15 mars": "Winter tires required · Dec. 1 to Mar. 15",
+    "Printemps": "Spring",
+
+    // ── Pneus et mags ──
+    "Pneus, mags et réparations": "Tires, wheels and repairs",
+    "Vous achetez chez KORR. Le réseau s’occupe du reste.": "You buy from KORR. The network handles the rest.",
+    "Pneus et mags au prix membre, posés au garage partenaire lors de votre créneau. Réparation et remise à neuf de jantes par des ateliers spécialisés, suivies par KORR.": "Tires and wheels at member prices, installed at the partner garage during your slot. Wheel repair and refinishing by specialized shops, followed by KORR.",
+    "PNEUS": "TIRES",
+    "Hiver, été, quatre saisons": "Winter, summer, all-season",
+    "Demandez votre prix en ligne : commandés par KORR, livrés et posés au garage partenaire lors de votre créneau.": "Ask for your price online: ordered by KORR, delivered and installed at the partner garage during your slot.",
+    "MAGS": "WHEELS",
+    "D’origine et après-marché": "OEM and aftermarket",
+    "Dimensions et déports vérifiés pour votre véhicule, toutes marques, Tesla et électriques compris.": "Sizes and offsets checked for your vehicle, all makes, Tesla and EVs included.",
+    "RÉPARATION DE JANTES": "WHEEL REPAIR",
+    "Retouche et remise à neuf": "Touch-up and refinishing",
+    "Éraflures de trottoir, corrosion, voilage léger : estimation photo en ligne, puis soumission d’un atelier partenaire, suivie par KORR.": "Curb rash, corrosion, minor bends: online photo estimate, then a quote from a partner shop, followed by KORR.",
+    "Acheter en ligne": "Buy online",
+    "Pneus et mags au prix KORR.": "Tires and wheels at KORR prices.",
+    "Choisissez le produit, indiquez votre véhicule et la dimension : KORR vous répond par courriel avec le prix, ou le prix membre si vous êtes membre.": "Choose the product, enter your vehicle and size: KORR replies by email with the price, or the member price if you’re a member.",
+    "Pneus d’hiver, d’été ou quatre saisons, toutes marques.": "Winter, summer or all-season tires, all brands.",
+    "Mags d’origine ou d’une autre marque, seuls ou en ensemble avec pneus montés : dimensions et déport vérifiés.": "OEM or aftermarket wheels, alone or as a set with mounted tires: size and offset checked.",
+    "Paiement en ligne sécurisé à partir du lancement d’avril 2027.": "Secure online payment from the April 2027 launch.",
+    "Prix avant taxes, selon la disponibilité chez le distributeur. Pose et équilibrage des pneus au prix du garage partenaire.": "Prices before tax, subject to distributor availability. Tire mounting and balancing at the partner garage’s price.",
+    "Produit": "Product",
+    "Mags d’origine": "OEM wheels",
+    "Mags d’une autre marque": "Aftermarket wheels",
+    "Ensemble mags et pneus": "Wheel and tire package",
+    "Saison": "Season",
+    "Hiver": "Winter",
+    "Été": "Summer",
+    "Quatre saisons": "All-season",
+    "Mags": "Wheels",
+    "D’origine": "OEM",
+    "D’une autre marque": "Aftermarket",
+    "Marque *": "Make *",
+    "Marque": "Make",
+    "Choisir…": "Choose…",
+    "Modèle": "Model",
+    "Année": "Year",
+    "Version": "Trim",
+    "Dimension": "Size",
+    "Je ne sais pas": "I don’t know",
+    "Quantité": "Quantity",
+    "Êtes-vous membre KORR ?": "Are you a KORR member?",
+    "Oui, je suis membre": "Yes, I’m a member",
+    "Non": "No",
+    "Oui": "Yes",
+    "Membre": "Member",
+    "J’accepte que KORR conserve mes coordonnées et les renseignements de mon véhicule pour me répondre par courriel au sujet de cette demande de prix.": "I agree that KORR may keep my contact and vehicle information to reply by email about this price request.",
+    "Recevoir mon prix": "Get my price",
+    "Demande reçue. Vous recevrez votre prix par courriel, en général dans un jour ouvrable.": "Request received. You’ll get your price by email, usually within one business day.",
+    "Estimation photo": "Photo estimate",
+    "Une éraflure ? Envoyez une photo.": "A scuff? Send a photo.",
+    "Photographiez votre jante : nous classons le dommage et vous envoyons une fourchette de prix par jante, validée par KORR.": "Take a photo of your wheel: we classify the damage and send you a price range per wheel, checked by KORR.",
+    "Fourchette indicative, avant taxes : le prix final est celui de la soumission écrite de l’atelier partenaire, après examen de la jante, et vous l’acceptez ou non avant tout travail. Une jante fissurée se remplace et ne se répare pas.": "Indicative range, before tax: the final price is the partner shop’s written quote after examining the wheel, and you accept it or not before any work. A cracked wheel is replaced, not repaired.",
+    "Ce véhicule est-il loué ? *": "Is this vehicle leased? *",
+    "Location": "Lease",
+    "Non, j’en suis propriétaire": "No, I own it",
+    "Oui, il est loué": "Yes, it’s leased",
+    "Pour un véhicule loué, le": "For a leased vehicle, the",
+    "diagnostic Fin de bail": "Lease Return check",
+    "est plus adapté : il tient compte de la grille de retour du loueur.": "is a better fit: it takes the lessor’s return chart into account.",
+    "+ Ajouter des photos (": "+ Add photos (",
+    "De face et de près, à la lumière du jour. Évitez de montrer la plaque.": "Head-on and close up, in daylight. Avoid showing the licence plate.",
+    "Retirer": "Remove",
+    "Nombre de jantes à réparer": "Number of wheels to repair",
+    "Nombre": "Number",
+    "J’accepte que KORR conserve mes photos et mes coordonnées pour préparer une estimation indicative et m’écrire à ce sujet (2 rappels au plus). Les photos peuvent être analysées par un outil d’intelligence artificielle dont les serveurs peuvent se trouver hors du Québec ; elles sont supprimées après 90 jours au plus.": "I agree that KORR may keep my photos and contact details to prepare an indicative estimate and write to me about it (2 reminders at most). Photos may be analyzed by an artificial intelligence tool whose servers may be outside Québec; they are deleted after 90 days at most.",
+    "Recevoir mon estimation": "Get my estimate",
+    "Véhicule loué : utilisez plutôt le diagnostic Fin de bail.": "Leased vehicle: use the Lease Return check instead.",
+    "Ajoutez au moins une photo de la jante.": "Add at least one photo of the wheel.",
+    "Réparation de jantes": "Wheel repair",
+    "Vous approuvez avant chaque travail.": "You approve before any work.",
+    "Constat": "Assessment",
+    "Le dommage est photographié lors de votre changement de saison, ou vous nous envoyez vos photos.": "The damage is photographed during your seasonal change, or you send us your photos.",
+    "Soumission": "Quote",
+    "Un atelier partenaire chiffre la réparation. Vous recevez le prix, rabais membre appliqué.": "A partner shop prices the repair. You get the price, member discount applied.",
+    "Approbation": "Approval",
+    "Aucun travail sans votre accord écrit.": "No work without your written approval.",
+    "Retour": "Return",
+    "La jante réparée est posée à votre prochain créneau.": "The repaired wheel is installed at your next slot.",
+    "Les commandes seront traitées à partir du printemps 2027.": "Orders will be processed starting in spring 2027.",
+    "Envoi…": "Sending…",
+    "Vérifiez les champs du formulaire.": "Check the form fields.",
+
+    // ── Fin de bail ──
+    "Rendez votre véhicule avec un dossier complet.": "Return your vehicle with a complete file.",
+    "Les grilles de retour des loueurs facturent les dommages au véhicule : carrosserie, pare-brise, intérieur, jantes et pneus. KORR garde un historique daté pendant tout le bail, coordonne les réparations et vous laisse le temps d’agir avant l’inspection du loueur.": "Lessors’ return charts bill for vehicle damage: body, windshield, interior, wheels and tires. KORR keeps a dated history throughout the lease, coordinates repairs and gives you time to act before the lessor’s inspection.",
+    "Changements et entreposage": "Changes and storage",
+    "2 par an · 1 jeu de 4 pneus": "2 per year · 1 set of 4 tires",
+    "Inspection du véhicule complet": "Full vehicle inspection",
+    "60 jours avant la restitution": "60 days before return",
+    "Rapport": "Report",
+    "Photos et vidéo datées": "Dated photos and video",
+    "Remise à neuf des jantes": "Wheel refinishing",
+    "Jusqu’à 4 jantes incluses": "Up to 4 wheels included",
+    "Autres réparations": "Other repairs",
+    "Coordonnées par KORR, sur soumission": "Coordinated by KORR, on quote",
+    "Pneus et jantes": "Tires and wheels",
+    "Prix membre · 15 % de rabais sur les jantes": "Member price · 15% off wheels",
+    "Ce que le forfait fait": "What the plan does",
+    "Documente l’état de votre véhicule, jantes et pneus compris, à chaque changement": "Documents your vehicle’s condition, wheels and tires included, at every change",
+    "Vous laisse 60 jours pour faire réparer avant l’inspection du loueur": "Gives you 60 days to get repairs done before the lessor’s inspection",
+    "Coordonne les réparations : carrosserie, pare-brise, esthétique et jantes": "Coordinates repairs: body, windshield, detailing and wheels",
+    "Vous donne un dossier daté à présenter en cas de désaccord": "Gives you a dated file to present if there is a dispute",
+    "Ce qu’il ne promet pas": "What it doesn’t promise",
+    "Il ne remplace pas l’inspection du loueur": "It doesn’t replace the lessor’s inspection",
+    "Il ne garantit pas l’absence de frais au retour": "It doesn’t guarantee you will avoid return charges",
+    "Seules 4 jantes sont remises à neuf dans le forfait ; les autres réparations sont sur soumission": "Only 4 wheels are refinished in the plan; other repairs are on quote",
+    "Un 2e jeu de pneus est facturé en supplément": "A 2nd set of tires is billed extra",
+    "Diagnostic gratuit · 2 minutes": "Free check · 2 minutes",
+    "Où en est votre véhicule ?": "How is your vehicle doing?",
+    "Dix questions sur l’état de votre véhicule : carrosserie, pare-brise, intérieur, jantes et pneus. Vous recevez un rapport daté, un calendrier à rebours avant le retour et deux rappels : 60 et 30 jours avant la fin du bail.": "Ten questions about your vehicle’s condition: body, windshield, interior, wheels and tires. You get a dated report, a countdown to your return date and two reminders: 60 and 30 days before your lease ends.",
+    "Date de fin du bail *": "Lease end date *",
+    "Bosses, rayures ou éclats de peinture sur la carrosserie": "Dents, scratches or paint chips on the body",
+    "Aucun": "None", "Aucune": "None",
+    "Légers, peu visibles": "Minor, barely visible",
+    "Visibles ou nombreux": "Visible or many",
+    "Pare-brise": "Windshield",
+    "Intact": "Intact",
+    "Éclat ou impact": "Chip or impact",
+    "Fissure": "Crack",
+    "Phare, feu ou rétroviseur fissuré ou brisé": "Cracked or broken headlight, light or mirror",
+    "Taches, déchirures ou brûlures à l’intérieur": "Stains, tears or burns inside",
+    "Légères": "Minor",
+    "Visibles ou nombreuses": "Visible or many",
+    "Éraflures de trottoir sur les jantes": "Curb rash on the wheels",
+    "Légères, superficielles": "Minor, surface only",
+    "Profondes ou nombreuses": "Deep or many",
+    "Jante voilée, fissurée ou bosselée": "Bent, cracked or dented wheel",
+    "Profondeur restante des pneus": "Remaining tread depth",
+    "Plus de 5 mm": "More than 5 mm",
+    "4 à 5 mm": "4 to 5 mm",
+    "Moins de 4 mm": "Less than 4 mm",
+    "Les 4 pneus sont de même marque et même modèle": "All 4 tires are the same brand and model",
+    "Bosse, coupure ou hernie sur un flanc": "Bulge, cut or bubble on a sidewall",
+    "Voyant de pression des pneus allumé": "Tire pressure warning light on",
+    "J’accepte de recevoir de KORR mon rapport, deux rappels avant la fin de mon bail et des nouvelles du lancement. Désinscription en tout temps.": "I agree to receive my report from KORR, two reminders before my lease ends and launch news. Unsubscribe at any time.",
+    "Obtenir mon rapport daté": "Get my dated report",
+    "Peu de points à surveiller": "Few things to watch",
+    "Quelques points à vérifier avant le retour": "A few things to check before return",
+    "Des réparations sont à prévoir avant le retour": "Repairs should be planned before return",
+    "Votre rapport daté vous a été envoyé par courriel (confirmez votre adresse pour recevoir les rappels à 60 et 30 jours). Il se vérifie en tout temps avec son code.": "Your dated report has been emailed to you (confirm your address to get the 60- and 30-day reminders). It can be verified at any time with its code.",
+    "Autodiagnostic indicatif : il ne remplace pas l’inspection du loueur et ne garantit pas l’absence de frais au retour.": "Indicative self-check: it doesn’t replace the lessor’s inspection and doesn’t guarantee you will avoid return charges.",
+    "Autodiagnostic indicatif. Il ne remplace pas l’inspection du loueur et ne garantit pas l’absence de frais au retour.": "Indicative self-check. It doesn’t replace the lessor’s inspection and doesn’t guarantee you will avoid return charges.",
+    "Réserver le forfait Fin de bail": "Reserve the Lease Return plan",
+    "Un rapport KORR se vérifie.": "A KORR report can be verified.",
+    "Entrez le code inscrit sur le rapport pour confirmer qu’il est authentique. Aucun renseignement personnel n’est affiché.": "Enter the code shown on the report to confirm it’s authentic. No personal information is displayed.",
+    "Code du rapport": "Report code",
+    "Vérifier": "Verify",
+    "Code invalide. Il ressemble à R-ABCD234EFG.": "Invalid code. It looks like R-ABCD234EFG.",
+    "Aucun rapport ne correspond à ce code.": "No report matches this code.",
+    "Ce rapport existe, mais son contenu ne correspond plus à l’original.": "This report exists, but its content no longer matches the original.",
+    "Vérification indisponible pour le moment, réessayez plus tard.": "Verification unavailable right now, try again later.",
+
+    // ── Politique de confidentialité ──
+    "Loi 25": "Law 25",
+    "Politique de confidentialité": "Privacy policy",
+    "Mise à jour :": "Updated:",
+    "17 octobre 2026": "October 17, 2026",
+    "Qui sommes-nous": "Who we are",
+    "KORR Conciergerie Automobile est une marque exploitée par KTX Automotive inc. (C.P. 1005, succ. Head Office, Saint-Lazare (Québec) J7T 2Z7). La présente politique décrit comment nous traitons vos renseignements personnels, conformément à la Loi sur la protection des renseignements personnels dans le secteur privé du Québec (Loi 25).": "KORR Conciergerie Automobile is a brand operated by KTX Automotive inc. (P.O. Box 1005, Head Office Branch, Saint-Lazare, Quebec J7T 2Z7). This policy describes how we handle your personal information, in accordance with Quebec’s Act respecting the protection of personal information in the private sector (Law 25).",
+    "Renseignements recueillis": "Information collected",
+    "Identité et coordonnées : prénom, nom, courriel, code postal.": "Identity and contact details: first name, last name, email, postal code.",
+    "Votre véhicule et votre bail, et le forfait qui vous intéresse.": "Your vehicle and lease, and the plan you’re interested in.",
+    "Outils du site : date de fin de bail, réponses à l’autodiagnostic, photos de jante, détails d’une demande de prix.": "Site tools: lease end date, self-check answers, wheel photos, price request details.",
+    "Garages et partenaires : nom de l’entreprise, coordonnées et message.": "Garages and partners: company name, contact details and message.",
+    "Utilisation": "Use",
+    "Gérer la liste d’attente et le parrainage, vous envoyer les rappels et rapports que vous avez demandés, vous informer de la prévente et du lancement, répondre à vos demandes et mesurer l’intérêt par secteur. Nous ne vendons aucun renseignement personnel.": "Managing the waitlist and referrals, sending you the reminders and reports you asked for, informing you about the presale and launch, answering your requests and measuring interest by area. We do not sell any personal information.",
+    "Hébergement et communication": "Hosting and disclosure",
+    "Vos renseignements sont hébergés au Canada : serveur d’application à Toronto, base de données et fichiers dans la région Canada Central.": "Your information is hosted in Canada: application server in Toronto, database and files in the Canada Central region.",
+    "Certains fournisseurs (site web, envoi de courriels, analyse de photos par intelligence artificielle) peuvent traiter des renseignements hors du Québec. Nous évaluons leurs mesures de protection avant de les retenir. Les photos leur sont transmises sans vos coordonnées ni métadonnées.": "Some providers (website, email delivery, AI photo analysis) may process information outside Québec. We assess their safeguards before choosing them. Photos are sent to them without your contact details or metadata.",
+    "Témoins (cookies)": "Cookies",
+    "Le site n’utilise aucun témoin de suivi publicitaire. La mesure d’audience est anonyme.": "The site uses no advertising tracking cookies. Audience measurement is anonymous.",
+    "Conservation": "Retention",
+    "Jusqu’à votre désinscription ou après 24 mois sans activité.": "Until you unsubscribe or after 24 months of inactivity.",
+    "Photos de jante : supprimées 7 jours après la demande si elle n’est pas traitée, 90 jours au plus sinon. Coordonnées liées à une estimation ou à une demande de prix : anonymisées après 12 mois.": "Wheel photos: deleted 7 days after the request if it is not processed, 90 days at most otherwise. Contact details linked to an estimate or price request: anonymized after 12 months.",
+    "Vos droits": "Your rights",
+    "Vous pouvez en tout temps accéder à vos renseignements, les faire corriger ou supprimer, retirer votre consentement et vous désinscrire (lien présent dans chaque courriel).": "You can at any time access your information, have it corrected or deleted, withdraw your consent and unsubscribe (link in every email).",
+    "Incidents et plaintes": "Incidents and complaints",
+    "En cas d’incident de confidentialité présentant un risque de préjudice sérieux, nous avisons les personnes concernées et la Commission d’accès à l’information du Québec. Vous pouvez aussi porter plainte auprès de la Commission (cai.gouv.qc.ca).": "If a confidentiality incident presents a risk of serious injury, we notify the people concerned and the Commission d’accès à l’information du Québec. You can also file a complaint with the Commission (cai.gouv.qc.ca).",
+    "Responsable de la protection des renseignements personnels": "Person in charge of the protection of personal information",
+    "Pour toute question ou pour exercer vos droits :": "For any question or to exercise your rights:",
+    ". Nous répondons dans un délai de 30 jours.": ". We reply within 30 days.",
+
+    // ── Images ──
+    "Allée d’entrepôt de pneus, chaque ensemble étiqueté par code QR": "Tire warehouse aisle, each set labelled with a QR code",
+    "Garage partenaire au crépuscule, voiture sur le pont pendant un changement de pneus": "Partner garage at dusk, car on the lift during a tire change",
+    "Téléphone affichant un code QR scanné au comptoir d’un garage": "Phone showing a QR code scanned at a garage counter",
+    "Gros plan d’une jante en alliage portant une éraflure de trottoir": "Close-up of an alloy wheel with curb rash",
+}
+
+// Textes calculés (nombres, codes, dates) : expressions régulières.
+const P: [RegExp, string][] = [
+    [/^J-(\d+) avant le 1er décembre$/, "$1 days to December 1"],
+    [/^J-(\d+)$/, "D-$1"],
+    [/^Rapport (R-[A-Z0-9]+)$/, "Report $1"],
+    [/^(\d+) jours avant la fin de votre bail\. $/, "$1 days before your lease ends. "],
+    [/^Répondez aux (\d+) questions? restantes?\.$/, "Answer the $1 remaining question(s)."],
+    [/^Demande (\S*) ?reçue\. Votre fourchette arrive par courriel, en général dans un jour ouvrable\.$/, "Request $1 received. Your range will arrive by email, usually within one business day."],
+    [/^Rapport authentique(?: du (.+?))?((?: · .+)?)\. Son contenu n’a pas été modifié\.$/, "Authentic report$1$2. Its content has not been modified."],
+]
+
+export function trStr(s: string): string {
+    if (LANG !== "en" || typeof s !== "string" || !s) return s
+    const hit = D[s]
+    if (hit !== undefined) return hit
+    if (s.includes("\n")) return s.split("\n").map(trStr).join("\n")
+    const pipe = s.indexOf("|")
+    if (pipe > 0) {
+        const label = s.slice(0, pipe).trim()
+        if (D[label] !== undefined) return D[label] + " " + s.slice(pipe)
+    }
+    const t = s.trim()
+    if (t !== s && D[t] !== undefined) return s.replace(t, D[t])
+    for (const [re, out] of P) if (re.test(t)) return s.replace(t, t.replace(re, out))
+    return s
+}
+export const tr = trStr
+
+// Propriétés jamais traduites (valeurs techniques).
+const KEEP = new Set(["src", "style", "id", "name", "value", "key", "type", "className", "ref", "autoComplete", "inputMode", "accept", "role", "rel", "target", "method", "action", "pattern", "min", "max", "htmlFor", "loading", "capture", "defaultValue", "srcSet", "sizes", "d", "viewBox", "fill", "stroke", "transform", "variants", "initial", "animate", "transition", "whileInView", "viewport", "layout", "link", "ctaLink", "secondaryLink", "endpoint", "page", "video", "poster", "audio", "logo", "image", "img"])
+
+function trDeep(v: any, depth = 0): any {
+    if (typeof v === "string") return trStr(v)
+    if (depth > 4 || v == null) return v
+    if (Array.isArray(v)) return v.map((x) => trDeep(x, depth + 1))
+    if (typeof v === "object" && Object.getPrototypeOf(v) === Object.prototype && !v.$$typeof) {
+        const o: any = {}
+        for (const k in v) o[k] = KEEP.has(k) ? v[k] : trDeep(v[k], depth + 1)
+        return o
+    }
+    return v
+}
+
+function trProps(p: any) {
+    const o: any = { ...p }
+    for (const k in o) {
+        if (k === "href" && typeof o[k] === "string") o[k] = loc(o[k])
+        else if (!KEEP.has(k) && !k.startsWith("on") && !k.startsWith("data-")) o[k] = trDeep(o[k])
+    }
+    return o
+}
+
+/** Remplace React.createElement via le pragma « @jsx h » : traduit en anglais, ne fait rien en français. */
+export function h(type: any, props: any, ...children: any[]) {
+    if (LANG === "en") {
+        if (props) props = trProps(props)
+        children = children.map((c) => trDeep(c))
+    }
+    return createElement(type, props, ...children)
+}
+export const Fragment = ReactFragment
+
+/** Bouton FR / EN : change de langue en gardant la page. */
+export function useSwitchLang() {
+    let info: any = null
+    try {
+        info = useLocaleInfo()
+    } catch {
+        info = null
+    }
+    return () => {
+        const target = LANG === "en" ? "fr" : "en"
+        const next = info?.locales?.find((l: any) => String(l.code || "").toLowerCase().startsWith(target))
+        if (next && info?.setLocale) {
+            info.setLocale(next)
+            return
+        }
+        const p = window.location.pathname
+        window.location.href = target === "en" ? "/en" + (p === "/" ? "" : p) : p.replace(/^\/en(?=\/|$)/, "") || "/"
+    }
+}
