@@ -151,6 +151,12 @@ export function MemberOffer() {
                     Votre lien de parrainage personnel arrive par courriel après votre inscription. Un paiement manqué ou un abonnement en pause retire automatiquement le statut : la place passe au suivant sur la liste.
                 </p>
             </div>
+            <div style={card}>
+                <div style={{ font: "600 15px Inter, sans-serif", color: "#F5F5F7", marginBottom: 10 }}>Les 200 places sont prises ?</div>
+                <p style={{ margin: 0, font: "400 15px/1.5 Inter, sans-serif", color: "#D2D2D7" }}>
+                    Inscrivez-vous quand même : vous entrez sur la liste d’attente de la clientèle premium. Chaque place qui se libère est offerte à la personne suivante, dans l’ordre d’inscription.
+                </p>
+            </div>
         </div>
     )
 }

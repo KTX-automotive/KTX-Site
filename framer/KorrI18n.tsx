@@ -601,6 +601,8 @@ const D: Record<string, string> = {
     "18 octobre 2026": "October 18, 2026",
     "Pour les entreprises et garages : le nombre de véhicules. Comment vous avez connu KORR, et le code de la personne qui vous a parrainé.": "For businesses and garages: the number of vehicles. How you heard about KORR, and the code of the person who referred you.",
     "Un prix. Deux saisons réglées.": "One price. Two seasons sorted.",
+    "Les 200 places sont prises ?": "All 200 spots taken?",
+    "Inscrivez-vous quand même : vous entrez sur la liste d’attente de la clientèle premium. Chaque place qui se libère est offerte à la personne suivante, dans l’ordre d’inscription.": "Sign up anyway: you join the waitlist for premium membership. Every spot that opens up is offered to the next person, in order of sign-up.",
     "Cliente et technicien validant un code QR au comptoir d’un garage partenaire": "Customer and technician validating a QR code at a partner garage counter",
     "Gros plan d’une jante en alliage photographiée au téléphone pour une estimation": "Close-up of an alloy wheel photographed with a phone for an estimate",
 }
