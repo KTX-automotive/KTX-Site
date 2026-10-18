@@ -4,7 +4,7 @@
 // KORR — pages du site (contenu repris de l'ancien site KTX, aux couleurs KORR).
 // Rendu par KorrPrivacy (KorrFooter.tsx) selon sa propriété « Page » : une page Framer = une instance.
 // Fichier volontairement long : il regroupe le contenu de 8 pages et leurs formulaires publics.
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import KorrNav from "./KorrNav.tsx"
 import KorrPlans from "./KorrPlans.tsx"
 import KorrFAQ from "./KorrFAQ.tsx"
@@ -804,7 +804,7 @@ function Fonctionnement() {
     return (
         <>
             <Hero eyebrow="Comment ça marche" title="Un seul interlocuteur : KORR. Nos garages partenaires font le travail."
-                lead="KORR anticipe vos créneaux, garde vos pneus, coordonne le garage partenaire et documente chaque service." image="garage-v2.webp"
+                lead="KORR anticipe vos créneaux, garde vos pneus, coordonne le garage partenaire et documente chaque service." image="garage-v3.webp"
                 alt="Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont" />
             <section style={section(48)}>
                 <div style={wrap}>
@@ -827,7 +827,7 @@ function Fonctionnement() {
                         </div>
                         <p style={{ ...smallS, marginTop: 16 }}>Disponible pour les membres dès le lancement d’avril 2027.</p>
                     </div>
-                    <img src={IMG + "qr-v3.webp"} alt="Cliente et technicien validant un code QR au comptoir d’un garage partenaire" loading="lazy"
+                    <img src={IMG + "qr.webp"} alt="Code QR affiché sur un téléphone, scanné au comptoir d’un garage partenaire" loading="lazy"
                         style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", borderRadius: 28, display: "block" }} />
                 </div>
                 <div style={{ ...wrap, marginTop: 40 }}>
@@ -887,7 +887,7 @@ function PneusEtMags() {
                 <div style={wrap}>
                     <Cards items={[
                         ["Hiver, été, quatre saisons", "Demandez votre prix en ligne : commandés par KORR, livrés et posés au garage partenaire lors de votre créneau.", "PNEUS"],
-                        ["D’origine seulement", "Mags d’origine du constructeur (OEM), dimensions et déports vérifiés pour votre véhicule, toutes marques, Tesla et électriques compris.", "MAGS"],
+                        ["D’origine", "Mags d’origine du constructeur (OEM), dimensions et déports vérifiés pour votre véhicule, toutes marques, Tesla et électriques compris.", "MAGS"],
                         ["Retouche et remise à neuf", "Éraflures de trottoir, corrosion, voilage léger : estimation photo en ligne, puis soumission d’un atelier partenaire, suivie par KORR.", "RÉPARATION DE JANTES"],
                     ]} />
                 </div>
@@ -899,7 +899,7 @@ function PneusEtMags() {
                             lead="Choisissez le produit, indiquez votre véhicule et la dimension : KORR vous répond par courriel avec le prix, ou le prix membre si vous êtes membre. Les pneus et les mags sont livrés et posés au garage partenaire lors de votre créneau." />
                         <Checks items={[
                             "Pneus d’hiver, d’été ou quatre saisons, toutes marques.",
-                            "Mags d’origine (OEM) seulement, seuls ou en ensemble avec pneus montés : dimensions et déport vérifiés. Pas de mags après-marché.",
+                            "Mags d’origine (OEM), seuls ou en ensemble avec pneus montés : dimensions et déport vérifiés. Pas de mags après-marché.",
                             "Paiement en ligne sécurisé à partir du lancement d’avril 2027.",
                         ]} />
                         <p style={{ ...smallS, marginTop: 20 }}>Prix avant taxes, selon la disponibilité chez le distributeur. Pose et équilibrage des pneus au prix du garage partenaire.</p>
@@ -1030,7 +1030,7 @@ function Garages() {
         <>
             <Hero eyebrow="Vous êtes un garage ?" title="Des clients planifiés des semaines d’avance."
                 lead="KORR remplit vos plages disponibles avec des membres déjà réservés et vous paie le jour même. Vous faites ce que vous faites le mieux."
-                image="garage-v2.webp" alt="Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont" />
+                image="garage-v3.webp" alt="Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont" />
             <section style={section(32)}>
                 <div style={wrap}>
                     <Cards numbered items={[
@@ -1110,23 +1110,78 @@ const FILM_POSTER = IMG + "video/korr-pub-poster.webp"
 
 function KorrFilm() {
     const L = lang() === "en" ? "en" : "fr"
+    const vid = useRef<HTMLVideoElement>(null)
+    const [playing, setPlaying] = useState(true)
+    const [sound, setSound] = useState(false)
+    const [pct, setPct] = useState(0)
+
+    // Lecture muette en boucle quand le film est à l’écran, comme sur l’ancien site KTX.
+    useEffect(() => {
+        const v = vid.current
+        if (!v || typeof IntersectionObserver === "undefined") return
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setPlaying(false)
+        const io = new IntersectionObserver(([e]) => {
+            if (e.isIntersecting && playing) v.play().catch(() => {})
+            else v.pause()
+        }, { threshold: 0.35 })
+        io.observe(v)
+        return () => io.disconnect()
+    }, [playing, L])
+
+    const toggleSound = () => {
+        const v = vid.current
+        if (!v) return
+        if (sound) {
+            v.muted = true
+            setSound(false)
+            return
+        }
+        v.muted = false
+        v.currentTime = 0
+        v.play().catch(() => {})
+        setSound(true)
+        setPlaying(true)
+    }
+    const togglePlay = () => {
+        const v = vid.current
+        if (!v) return
+        if (playing) v.pause()
+        else v.play().catch(() => {})
+        setPlaying(!playing)
+    }
+    const btn = { height: 34, padding: "0 14px", borderRadius: 999, border: 0, background: "rgba(255,255,255,0.14)", backdropFilter: "blur(10px)", color: "#F5F5F7", font: "600 12px/1 Inter, sans-serif", letterSpacing: "0.08em", cursor: "pointer" }
+
     return (
         <section id="film" style={{ ...section(96), textAlign: "center" as const }}>
             <div style={wrap}>
                 <p style={eyebrowS}>Le film</p>
                 <h2 style={{ ...h2S, margin: 0 }}>KORR en une minute.</h2>
             </div>
-            <div style={{ margin: "48px auto 0", maxWidth: 1200, borderRadius: 28, overflow: "hidden", background: "#000", aspectRatio: "16 / 9" }}>
+            <div style={{ position: "relative", margin: "48px auto 0", maxWidth: 1200, borderRadius: 28, overflow: "hidden", background: "#000", aspectRatio: "16 / 9" }}>
                 <video
                     key={L}
+                    ref={vid}
                     src={FILM_VIDEO[L]}
                     poster={FILM_POSTER}
-                    controls
+                    muted
+                    loop
                     playsInline
-                    preload="none"
+                    preload="metadata"
                     aria-label="Film KORR"
+                    onTimeUpdate={(e) => { const v = e.currentTarget; if (v.duration) setPct((v.currentTime / v.duration) * 100) }}
                     style={{ width: "100%", height: "100%", display: "block", objectFit: "cover" }}
                 />
+                <div style={{ position: "absolute", top: 16, right: 16, display: "flex", gap: 8 }}>
+                    <button type="button" aria-pressed={sound} onClick={toggleSound} style={{ ...btn, ...(sound ? {} : { background: ACCENT, color: "#06120E" }) }}>
+                        {sound ? (L === "en" ? "SOUND ON" : "SON ACTIVÉ") : L === "en" ? "TURN SOUND ON" : "ACTIVER LE SON"}
+                    </button>
+                    <button type="button" onClick={togglePlay} style={btn}>
+                        {playing ? "PAUSE" : L === "en" ? "PLAY" : "LECTURE"}
+                    </button>
+                </div>
+                <div style={{ position: "absolute", left: 20, right: 20, bottom: 18, height: 3, borderRadius: 2, background: "rgba(255,255,255,0.22)", overflow: "hidden" }}>
+                    <i style={{ display: "block", height: "100%", width: pct + "%", background: "#F5F5F7" }} />
+                </div>
             </div>
         </section>
     )
@@ -1158,9 +1213,9 @@ export function HomeExtras() {
                 <div style={{ ...wrap, display: "grid", gap: 96 }}>
                     <Reveal image="storage-v2.webp" alt="Allée d’entrepôt de pneus, chaque ensemble étiqueté par code QR" eyebrow="Entreposage suivi par code QR"
                         title="Vos pneus dorment ici." text="Lavés, étiquetés, rangés. Chaque entrée et chaque sortie est datée. Plus de pneus dans le garage ni sur le balcon du condo." />
-                    <Reveal flip image="garage-v2.webp" alt="Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont" eyebrow="Garages partenaires sélectionnés"
+                    <Reveal flip image="garage-v3.webp" alt="Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont" eyebrow="Garages partenaires sélectionnés"
                         title="Nos garages font le travail." text="Un réseau choisi du centre-ville de Montréal jusqu’à Vaudreuil-Soulanges. Votre créneau est bloqué bien avant novembre. KORR coordonne tout, vous arrivez à l’heure dite." />
-                    <Reveal image="qr-v3.webp" alt="Cliente et technicien validant un code QR au comptoir d’un garage partenaire" eyebrow="Validation par code QR"
+                    <Reveal image="qr.webp" alt="Code QR affiché sur un téléphone, scanné au comptoir d’un garage partenaire" eyebrow="Validation par code QR"
                         title="Un scan. C’est réglé." text="Rien à payer sur place. Après la visite, votre rapport arrive sur votre téléphone : profondeur des pneus, photos datées, état des jantes." />
                     <div style={{ ...grid(320), gap: 48, alignItems: "center", direction: "rtl" }}>
                         <img src={IMG + "wheel-v2.webp"} alt="Gros plan d’une jante en alliage photographiée au téléphone pour une estimation" loading="lazy"
