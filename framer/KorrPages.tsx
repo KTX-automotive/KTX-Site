@@ -1100,6 +1100,88 @@ function ListeAttente() {
     )
 }
 
+// ───── Accueil : blocs repris de l'ancien accueil KTX (chiffres, photos, 400 $, cohue, rappel) ─────
+
+function Reveal({ image, alt, eyebrow, title, text, flip }: { image: string; alt: string; eyebrow: string; title: string; text: string; flip?: boolean }) {
+    return (
+        <div style={{ ...grid(320), gap: 48, alignItems: "center", direction: flip ? "rtl" : "ltr" }}>
+            <img src={IMG + image} alt={alt} loading="lazy" style={{ width: "100%", aspectRatio: "16 / 10", objectFit: "cover", borderRadius: 28, display: "block" }} />
+            <div style={{ direction: "ltr" }}>
+                <p style={eyebrowS}>{eyebrow}</p>
+                <h2 style={h2S}>{title}</h2>
+                <p style={leadS}>{text}</p>
+            </div>
+        </div>
+    )
+}
+
+/** Inséré par KorrBento, sur l'accueil seulement. */
+export function HomeExtras() {
+    useInter()
+    const nums: [string, string][] = [
+        ["2", "créneaux réservés dès l’inscription, automne et printemps"],
+        ["1", "seul interlocuteur : KORR, du rappel au rapport"],
+        ["0 $", "à payer au garage, un scan de code QR suffit"],
+        ["60", "jours d’avance pour agir avant un retour de location"],
+    ]
+    return (
+        <div style={{ width: "100%", background: "#050505", fontFamily: "Inter, sans-serif" }}>
+            <section style={section(64)}>
+                <div style={{ ...wrap, ...grid(220) }}>
+                    {nums.map(([n, t]) => (
+                        <div key={n} style={{ ...card, padding: 24 }}>
+                            <div style={{ font: "600 clamp(44px, 6vw, 64px)/1 Inter, sans-serif", letterSpacing: "-0.04em", color: "#F5F5F7", marginBottom: 10 }}>{n}</div>
+                            <p style={pS}>{t}</p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+            <section style={section(64)}>
+                <div style={{ ...wrap, display: "grid", gap: 96 }}>
+                    <Reveal image="storage.webp" alt="Allée d’entrepôt de pneus, chaque ensemble étiqueté par code QR" eyebrow="Entreposage suivi par code QR"
+                        title="Vos pneus dorment ici." text="Lavés, étiquetés, rangés. Chaque entrée et chaque sortie est datée. Plus de pneus dans le garage ni sur le balcon du condo." />
+                    <Reveal flip image="garage.webp" alt="Garage partenaire au crépuscule, voiture sur le pont pendant un changement de pneus" eyebrow="Garages partenaires sélectionnés"
+                        title="Nos garages font le travail." text="Un réseau choisi du centre-ville de Montréal jusqu’à Vaudreuil-Soulanges. Votre créneau est bloqué bien avant novembre. KORR coordonne tout, vous arrivez à l’heure dite." />
+                    <Reveal image="qr.webp" alt="Téléphone affichant un code QR scanné au comptoir d’un garage" eyebrow="Validation par code QR"
+                        title="Un scan. C’est réglé." text="Rien à payer sur place. Après la visite, votre rapport arrive sur votre téléphone : profondeur des pneus, photos datées, état des jantes." />
+                    <div style={{ ...grid(320), gap: 48, alignItems: "center", direction: "rtl" }}>
+                        <img src={IMG + "wheel.webp"} alt="Gros plan d’une jante en alliage portant une éraflure de trottoir" loading="lazy"
+                            style={{ width: "100%", aspectRatio: "16 / 10", objectFit: "cover", borderRadius: 28, display: "block" }} />
+                        <div style={{ direction: "ltr" }}>
+                            <p style={eyebrowS}>Forfait Fin de bail</p>
+                            <div style={{ font: "600 clamp(64px, 10vw, 112px)/1 Inter, sans-serif", letterSpacing: "-0.05em", color: "#F5F5F7" }}>400 $</div>
+                            <h2 style={{ ...h2S, marginTop: 8 }}>Une éraflure peut coûter ça au retour.*</h2>
+                            <p style={leadS}>KORR documente vos jantes à chaque changement et les inspecte 60 jours avant la restitution. Vous avez le temps d’agir, et un dossier daté en cas de désaccord.</p>
+                            <a href="/fin-de-bail#diagnostic" style={{ ...btn(false), marginTop: 24 }}>Faire le diagnostic gratuit</a>
+                            <p style={{ ...smallS, marginTop: 16 }}>* Par jante, selon la grille de retour d’un constructeur allemand. Ne remplace pas l’inspection du loueur et ne garantit pas l’absence de frais.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    )
+}
+
+/** Inséré par KorrAudience, sur l'accueil seulement : rappel du 1er décembre et appel final. */
+export function HomeClosing() {
+    useInter()
+    return (
+        <div style={{ width: "100%", background: "#050505", fontFamily: "Inter, sans-serif" }}>
+            <section style={section()}>
+                <div style={wrap}><WinterAlert /></div>
+            </section>
+            <section style={section(64)}>
+                <div style={{ ...wrap, textAlign: "center" }}>
+                    <p style={eyebrowS}>Lancement avril 2027</p>
+                    <h2 style={{ ...h1S, fontSize: "clamp(36px, 5.6vw, 64px)" }}>La prochaine cohue, vous la regardez passer.</h2>
+                    <p style={{ ...leadS, margin: "0 auto 28px" }}>Inscription gratuite et sans engagement. Accès prioritaire à la prévente de mars 2027.</p>
+                    <a href="#liste-attente" style={btn()}>Rejoindre la liste d’attente</a>
+                </div>
+            </section>
+        </div>
+    )
+}
+
 const RENDER: Record<PageKey, () => any> = {
     fonctionnement: Fonctionnement,
     forfaits: Forfaits,
