@@ -631,6 +631,7 @@ const REV_ROWS: [string, string, string][] = [
     ["Deux changements de pneus réservés d’avance, vos pneus entreposés et suivis, un rapport après chaque visite. Lancement en avril 2027.", "Vos deux changements de pneus réservés d’avance, vos pneus entreposés en lieu sûr et un rapport après chaque visite. Lancement en avril 2027.", "Both of your tire changes booked ahead, your tires stored safely, and a report after every visit. Launching April 2027."],
     ["Voir les forfaits ›", "Découvrir les forfaits ›", "Explore the plans ›"],
     ["Voir les forfaits", "Découvrir les forfaits", "Explore the plans"],
+    ["Le 1er décembre ne se déplace pas. Votre rendez-vous, oui.", "Le changement de pneus arrive. Votre rendez-vous est déjà réservé.", "Tire change season is coming. Your appointment is already booked."],
     ["Trois étapes. Puis plus rien à gérer.", "Trois étapes, puis plus rien à gérer.", "Three steps. Then nothing left to manage."],
     ["Vous vous inscrivez", "Vous vous inscrivez", "You sign up"],
     ["Choisissez votre forfait. Vos deux créneaux, automne et printemps, sont réservés immédiatement dans un garage partenaire de votre secteur.", "Choisissez votre forfait : vos deux créneaux, à l’automne et au printemps, sont aussitôt réservés dans un garage partenaire près de chez vous.", "Choose your plan, and your two slots, fall and spring, are booked right away at a partner garage near you."],
