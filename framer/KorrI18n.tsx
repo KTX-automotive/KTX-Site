@@ -631,6 +631,8 @@ const REV_ROWS: [string, string, string][] = [
     ["Deux changements de pneus réservés d’avance, vos pneus entreposés et suivis, un rapport après chaque visite. Lancement en avril 2027.", "Vos deux changements de pneus réservés d’avance, vos pneus entreposés en lieu sûr et un rapport après chaque visite. Lancement en avril 2027.", "Both of your tire changes booked ahead, your tires stored safely, and a report after every visit. Launching April 2027."],
     ["Voir les forfaits ›", "Découvrir les forfaits ›", "Explore the plans ›"],
     ["Voir les forfaits", "Découvrir les forfaits", "Explore the plans"],
+    ["2 changements de pneus par an", "2 changements de pneus par an", "2 tire changes a year"],
+    ["Entreposage et jantes à la carte", "Entreposage et jantes à la carte", "Storage and wheel services à la carte"],
     ["Le 1er décembre ne se déplace pas. Votre rendez-vous, oui.", "Le changement de pneus arrive. Votre rendez-vous est déjà réservé.", "Tire change season is coming. Your appointment is already booked."],
     ["Au Québec, les pneus d’hiver sont obligatoires du 1er décembre au 15 mars. Chaque automne, tout le monde appelle son garage la même semaine. Avec KORR, votre créneau est fixé bien avant.", "À chaque changement de pneus, au printemps comme à l’automne, tout le monde appelle son garage la même semaine. Avec KORR, votre créneau est fixé bien avant.", "Every tire season, spring and fall, everyone calls their garage the same week. With KORR, your slot is set well ahead."],
     ["Trois étapes. Puis plus rien à gérer.", "Trois étapes, puis plus rien à gérer.", "Three steps. Then nothing left to manage."],
