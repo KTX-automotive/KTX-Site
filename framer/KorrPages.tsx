@@ -10,6 +10,8 @@ import KorrPlans from "./KorrPlans.tsx"
 import KorrFAQ from "./KorrFAQ.tsx"
 import KorrWaitlist from "./KorrWaitlist.tsx"
 import { h, Fragment, useLang, lang, loc, tr } from "./KorrI18n.tsx"
+// Référence explicite : sans elle, l’import utilisé seulement par le pragma JSX est retiré à la compilation.
+void [h, Fragment]
 
 const API = "https://ktx-api.fly.dev"
 const IMG = "https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@e87f5174f751b60bb4873fd180eea45c3df05085/home/assets/"
