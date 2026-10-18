@@ -14,7 +14,7 @@ import { h, Fragment, useLang, lang, loc, tr } from "./KorrI18n.tsx"
 void [h, Fragment]
 
 const API = "https://ktx-api.fly.dev"
-const IMG = "https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@86ee5242a6c4bdab1fc6126884857ee72463b77c/home/assets/"
+const IMG = "https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@b8322bb589b36b9d47abc206baa3abb3e6f61ae1/home/assets/"
 const ACCENT = "#3FBF9F"
 const FONT =
     "https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap"
@@ -338,8 +338,8 @@ function VehicleFields({ v, setV, requireMake = true }: { v: Vehicle; setV: (v: 
     return (
         <>
             <Field label={`Marque${requireMake ? " *" : ""}`}>
-                <Select required={requireMake} value={v.make} options={makes.map((o) => [o.slug, o.name])}
-                    onChange={(s) => setV({ ...EMPTY_VEHICLE, make: s, makeName: name(makes, s) })} />
+                <Select required={requireMake} value={v.make} options={[...makes.map((o) => [o.slug, o.name] as [string, string]), ["__autre", "Autre"]]}
+                    onChange={(s) => (s === "__autre" ? (setFree(true), setV({ ...EMPTY_VEHICLE })) : setV({ ...EMPTY_VEHICLE, make: s, makeName: name(makes, s) }))} />
             </Field>
             <Field label="Modèle">
                 <Select value={v.model} disabled={!v.make} options={models.map((o) => [o.slug, o.name])}
@@ -367,13 +367,12 @@ const vehicleBody = (v: Vehicle) => ({
 
 // ───── Formulaire : demande de prix pneus et mags ─────
 
-const SIZES = "205/55R16 215/55R17 215/60R16 225/45R17 225/45R18 225/55R17 225/55R18 225/60R17 225/65R17 235/45R18 235/55R18 235/55R19 235/60R18 235/65R17 245/40R19 245/45R18 245/45R19 255/45R19 255/45R20 255/55R18 265/50R20 275/40R20 275/45R21"
+const SIZES = "185/65R15 195/65R15 205/65R15 195/55R16 205/55R16 205/60R16 215/55R16 215/60R16 215/65R16 225/60R16 235/70R16 205/50R17 215/45R17 215/50R17 215/55R17 215/60R17 225/45R17 225/50R17 225/55R17 225/60R17 225/65R17 235/55R17 235/65R17 245/65R17 265/70R17 215/55R18 225/40R18 225/45R18 225/55R18 225/60R18 235/40R18 235/45R18 235/50R18 235/55R18 235/60R18 245/40R18 245/45R18 245/60R18 255/55R18 255/70R18 265/60R18 265/65R18 225/40R19 225/45R19 225/55R19 235/35R19 235/40R19 235/45R19 235/50R19 235/55R19 245/40R19 245/45R19 255/35R19 255/40R19 255/45R19 255/50R19 255/55R19 275/35R19 275/40R19 235/35R20 235/45R20 235/55R20 245/35R20 245/40R20 245/45R20 255/35R20 255/40R20 255/45R20 255/50R20 265/50R20 275/35R20 275/40R20 275/45R20 275/55R20 275/60R20 285/35R20 285/45R20 245/35R21 255/35R21 255/40R21 265/35R21 265/40R21 275/35R21 275/40R21 275/45R21 285/35R21 295/35R21 315/30R21 265/35R22 275/40R22 285/40R22 285/45R22 305/40R22"
     .split(" ")
 
 function QuoteForm() {
     const [product, setProduct] = useState("pneus")
     const [season, setSeason] = useState("hiver")
-    const [wheelKind, setWheelKind] = useState("origine")
     const [v, setV] = useState<Vehicle>(EMPTY_VEHICLE)
     const [size, setSize] = useState("")
     const [qty, setQty] = useState("4")
@@ -391,8 +390,8 @@ function QuoteForm() {
         setStatus(null)
         try {
             await post("/v1/product-quotes", {
-                produit: product, saison: tires ? season : undefined, type_mags: product === "ensemble" ? wheelKind : undefined,
-                ...vehicleBody(v), dimension: size && size !== "inconnue" ? size : undefined, quantite: qty, prenom: first || undefined,
+                produit: product, saison: tires ? season : undefined, type_mags: product === "ensemble" ? "origine" : undefined,
+                ...vehicleBody(v), dimension: size && size !== "inconnue" && size !== "autre" ? size : undefined, quantite: qty, prenom: first || undefined,
                 membre: member, courriel: email, consentement: ok ? "oui" : "", langue: lang(), website: hp,
             })
             setStatus({ ok: true, msg: "Demande reçue. Vous recevrez votre prix par courriel, en général dans un jour ouvrable." })
@@ -407,21 +406,16 @@ function QuoteForm() {
             <Honeypot value={hp} onChange={setHp} />
             <Field label="Produit" wide>
                 <Choice name="Produit" value={product} onChange={setProduct}
-                    options={[["pneus", "Pneus"], ["mags_origine", "Mags d’origine"], ["mags_autre", "Mags d’une autre marque"], ["ensemble", "Ensemble mags et pneus"]]} />
+                    options={[["pneus", "Pneus"], ["mags_origine", "Mags d’origine (OEM)"], ["ensemble", "Ensemble mags d’origine et pneus"]]} />
             </Field>
             {tires ? (
                 <Field label="Saison" wide>
                     <Choice name="Saison" value={season} onChange={setSeason} options={[["hiver", "Hiver"], ["ete", "Été"], ["quatre_saisons", "Quatre saisons"]]} />
                 </Field>
             ) : null}
-            {product === "ensemble" ? (
-                <Field label="Mags" wide>
-                    <Choice name="Mags" value={wheelKind} onChange={setWheelKind} options={[["origine", "D’origine"], ["autre", "D’une autre marque"]]} />
-                </Field>
-            ) : null}
             <VehicleFields v={v} setV={setV} />
-            <Field label="Dimension">
-                <Select value={size} onChange={setSize} options={[["inconnue", "Je ne sais pas"], ...SIZES.map((s) => [s, s] as [string, string])]} />
+            <Field label="Dimension *">
+                <Select required value={size} onChange={setSize} options={[["inconnue", "Je ne sais pas"], ...SIZES.map((s) => [s, s] as [string, string]), ["autre", "Autre"]]} />
             </Field>
             <Field label="Quantité">
                 <Select value={qty} onChange={setQty} placeholder="Quantité" options={[["1", "1"], ["2", "2"], ["4", "4"]]} />
@@ -826,21 +820,21 @@ function Fonctionnement() {
                 <div style={{ ...wrap, ...grid(320), gap: 48, alignItems: "center" }}>
                     <div>
                         <Head id="korr-trace" eyebrow="KORR Trace" title="Chaque visite laisse une trace. Datée, mesurée, vérifiable."
-                            lead="Après chaque visite, vous recevez votre rapport KORR Trace : l’état de vos pneus et de vos jantes, mesuré et photographié au garage partenaire, avec un code que n’importe qui peut vérifier." />
+                            lead="Après chaque visite, vous recevez votre rapport KORR Trace : l’état de vos pneus et de vos jantes, mesuré et photographié au garage partenaire, avec un code QR que n’importe qui peut vérifier." />
                         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                             <a href="#liste-attente" style={btn()}>Rejoindre la liste d’attente</a>
                             <a href="/fin-de-bail#verifier" style={btn(false)}>Vérifier un rapport</a>
                         </div>
                         <p style={{ ...smallS, marginTop: 16 }}>Disponible pour les membres dès le lancement d’avril 2027.</p>
                     </div>
-                    <img src={IMG + "qr-v2.webp"} alt="Cliente et technicien validant un code QR au comptoir d’un garage partenaire" loading="lazy"
+                    <img src={IMG + "qr-v3.webp"} alt="Cliente et technicien validant un code QR au comptoir d’un garage partenaire" loading="lazy"
                         style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", borderRadius: 28, display: "block" }} />
                 </div>
                 <div style={{ ...wrap, marginTop: 40 }}>
                     <Cards numbered items={[
                         ["Pneus mesurés", "L’usure et l’âge de chaque pneu, relevés au garage partenaire à chaque visite."],
                         ["Serrage consigné", "Le serrage de vos roues est inscrit au rapport par le garage partenaire."],
-                        ["Revente et fin de bail", "Un historique daté, avec photos, que l’acheteur de votre véhicule ou votre loueur peut vérifier par code."],
+                        ["Revente et fin de bail", "Un historique daté, avec photos, que l’acheteur de votre véhicule ou votre loueur peut vérifier par code QR."],
                     ]} />
                 </div>
             </section>
@@ -893,7 +887,7 @@ function PneusEtMags() {
                 <div style={wrap}>
                     <Cards items={[
                         ["Hiver, été, quatre saisons", "Demandez votre prix en ligne : commandés par KORR, livrés et posés au garage partenaire lors de votre créneau.", "PNEUS"],
-                        ["D’origine et après-marché", "Dimensions et déports vérifiés pour votre véhicule, toutes marques, Tesla et électriques compris.", "MAGS"],
+                        ["D’origine seulement", "Mags d’origine du constructeur (OEM), dimensions et déports vérifiés pour votre véhicule, toutes marques, Tesla et électriques compris.", "MAGS"],
                         ["Retouche et remise à neuf", "Éraflures de trottoir, corrosion, voilage léger : estimation photo en ligne, puis soumission d’un atelier partenaire, suivie par KORR.", "RÉPARATION DE JANTES"],
                     ]} />
                 </div>
@@ -902,10 +896,10 @@ function PneusEtMags() {
                 <div style={{ ...wrap, ...grid(340), gap: 48, alignItems: "start" }}>
                     <div>
                         <Head id="prix" eyebrow="Acheter en ligne" title="Pneus et mags au prix KORR."
-                            lead="Choisissez le produit, indiquez votre véhicule et la dimension : KORR vous répond par courriel avec le prix, ou le prix membre si vous êtes membre." />
+                            lead="Choisissez le produit, indiquez votre véhicule et la dimension : KORR vous répond par courriel avec le prix, ou le prix membre si vous êtes membre. Les pneus et les mags sont livrés et posés au garage partenaire lors de votre créneau." />
                         <Checks items={[
                             "Pneus d’hiver, d’été ou quatre saisons, toutes marques.",
-                            "Mags d’origine ou d’une autre marque, seuls ou en ensemble avec pneus montés : dimensions et déport vérifiés.",
+                            "Mags d’origine (OEM) seulement, seuls ou en ensemble avec pneus montés : dimensions et déport vérifiés. Pas de mags après-marché.",
                             "Paiement en ligne sécurisé à partir du lancement d’avril 2027.",
                         ]} />
                         <p style={{ ...smallS, marginTop: 20 }}>Prix avant taxes, selon la disponibilité chez le distributeur. Pose et équilibrage des pneus au prix du garage partenaire.</p>
@@ -920,6 +914,11 @@ function PneusEtMags() {
                             lead="Photographiez votre jante : nous classons le dommage et vous envoyons une fourchette de prix par jante, validée par KORR." />
                         <img src={IMG + "wheel-v2.webp"} alt="Gros plan d’une jante en alliage photographiée au téléphone pour une estimation" loading="lazy"
                             style={{ width: "100%", aspectRatio: "16 / 10", objectFit: "cover", borderRadius: 24, display: "block", marginBottom: 20 }} />
+                        <ol style={{ margin: "0 0 20px", paddingLeft: 20, display: "grid", gap: 10, font: "400 16px/1.5 Inter, sans-serif", color: "#D2D2D7" }}>
+                            <li>Vous envoyez de 1 à 4 photos de la jante (véhicule dont vous êtes propriétaire).</li>
+                            <li>Le dommage est classé, puis vérifié par KORR.</li>
+                            <li>Vous recevez une fourchette indicative par courriel, en général dans un jour ouvrable.</li>
+                        </ol>
                         <p style={smallS}>Fourchette indicative, avant taxes : le prix final est celui de la soumission écrite de l’atelier partenaire, après examen de la jante, et vous l’acceptez ou non avant tout travail. Une jante fissurée se remplace et ne se répare pas.</p>
                     </div>
                     <RimForm />
@@ -994,6 +993,11 @@ function FinDeBail() {
                     <Head id="verifier" eyebrow="Vérifier un rapport" title="Un rapport KORR se vérifie."
                         lead="Entrez le code inscrit sur le rapport pour confirmer qu’il est authentique. Aucun renseignement personnel n’est affiché." />
                     <VerifyForm />
+                    <div style={{ ...card, marginTop: 32 }}>
+                        <p style={eyebrowS}>KORR Trace</p>
+                        <p style={{ ...pS, color: "#D2D2D7" }}>Chaque visite produit un rapport daté, vérifiable par code QR.</p>
+                        <a href={loc("/fonctionnement#korr-trace")} style={{ display: "inline-block", marginTop: 12, color: ACCENT, font: "600 15px Inter, sans-serif", textDecoration: "none" }}>Voir comment →</a>
+                    </div>
                 </div>
             </section>
         </>
@@ -1079,31 +1083,8 @@ function Faq() {
 }
 
 function ListeAttente() {
-    return (
-        <>
-            <div style={{ height: 52 }} />
-            <section style={{ ...section(64), paddingBottom: 0 }}>
-                <div style={{ ...wrap, ...grid(300), gap: 16 }}>
-                    <div style={card}>
-                        <p style={eyebrowS}>Membre exclusif · 200 places</p>
-                        <Checks items={[
-                            "Accès prioritaire à la prévente de mars 2027",
-                            "Tarif exclusif conservé tant que vous restez membre",
-                            "Aucun paiement avant la prévente",
-                        ]} />
-                    </div>
-                    <div style={card}>
-                        <p style={eyebrowS}>Pour obtenir le statut</p>
-                        <ol style={{ margin: 0, paddingLeft: 20, display: "grid", gap: 10, font: "400 16px/1.5 Inter, sans-serif", color: "#D2D2D7" }}>
-                            <li>Adhérer à la prévente de mars 2027</li>
-                            <li>Parrainer 2 personnes qui s’inscrivent à la liste d’attente</li>
-                        </ol>
-                        <p style={{ ...smallS, marginTop: 14 }}>Un paiement manqué ou un abonnement en pause retire automatiquement le statut : la place passe au suivant sur la liste.</p>
-                    </div>
-                </div>
-            </section>
-        </>
-    )
+    // L’offre « Membre exclusif · 200 places » et le parrainage sont affichés par KorrWaitlist, juste en dessous.
+    return <div style={{ height: 52 }} />
 }
 
 // ───── Accueil : blocs repris de l'ancien accueil KTX (chiffres, photos, 400 $, cohue, rappel) ─────
@@ -1179,7 +1160,7 @@ export function HomeExtras() {
                         title="Vos pneus dorment ici." text="Lavés, étiquetés, rangés. Chaque entrée et chaque sortie est datée. Plus de pneus dans le garage ni sur le balcon du condo." />
                     <Reveal flip image="garage-v2.webp" alt="Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont" eyebrow="Garages partenaires sélectionnés"
                         title="Nos garages font le travail." text="Un réseau choisi du centre-ville de Montréal jusqu’à Vaudreuil-Soulanges. Votre créneau est bloqué bien avant novembre. KORR coordonne tout, vous arrivez à l’heure dite." />
-                    <Reveal image="qr-v2.webp" alt="Cliente et technicien validant un code QR au comptoir d’un garage partenaire" eyebrow="Validation par code QR"
+                    <Reveal image="qr-v3.webp" alt="Cliente et technicien validant un code QR au comptoir d’un garage partenaire" eyebrow="Validation par code QR"
                         title="Un scan. C’est réglé." text="Rien à payer sur place. Après la visite, votre rapport arrive sur votre téléphone : profondeur des pneus, photos datées, état des jantes." />
                     <div style={{ ...grid(320), gap: 48, alignItems: "center", direction: "rtl" }}>
                         <img src={IMG + "wheel-v2.webp"} alt="Gros plan d’une jante en alliage photographiée au téléphone pour une estimation" loading="lazy"
