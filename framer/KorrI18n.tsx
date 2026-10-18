@@ -137,7 +137,7 @@ const D: Record<string, string> = {
     "Forfaits annuels": "Annual plans",
     "Deux changements de pneus réservés d’avance, toutes marques, du centre-ville de Montréal à Vaudreuil-Soulanges. Choisissez jusqu’où on s’occupe du reste.": "Two tire changes booked in advance, all makes, from downtown Montréal to Vaudreuil-Soulanges. Choose how much of the rest we handle.",
     "Essentiel": "Essential",
-    "Votre place est déjà réservée.": "Your spot is already booked.",
+    "Votre place est déjà réservée.": "Both of your slots, booked ahead.",
     "Prix dévoilé en mars 2027": "Price revealed in March 2027",
     "Par année, 2 saisons · taxes en sus": "Per year, 2 seasons · plus tax",
     "2 changements de pneus par an (automne et printemps)": "2 tire changes a year (fall and spring)",
