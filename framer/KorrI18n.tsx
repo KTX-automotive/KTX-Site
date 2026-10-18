@@ -48,6 +48,8 @@ const D: Record<string, string> = {
     "Contact": "Contact",
     "Confidentialité (Loi 25)": "Privacy (Law 25)",
     "Confidentialité": "Privacy",
+    "Adresse postale : C.P. 1005, succ. Head Office, Saint-Lazare (Québec) J7T 2Z7": "Mailing address: P.O. Box 1005, Head Office Branch, Saint-Lazare, Quebec J7T 2Z7",
+    "Conciergerie roues et pneus.": "Wheel and tire concierge.",
     "C.P. 1005, succ. Head Office, Saint-Lazare (Québec) J7T 2Z7": "P.O. Box 1005, Head Office Branch, Saint-Lazare, Quebec J7T 2Z7",
     "Conciergerie roues et pneus. C.P. 1005, succ. Head Office, Saint-Lazare (Québec) J7T 2Z7": "Wheel and tire concierge. P.O. Box 1005, Head Office Branch, Saint-Lazare, Quebec J7T 2Z7",
     "La saison des pneus arrive. Pas pour vous.": "Tire season is coming. Not for you.",
