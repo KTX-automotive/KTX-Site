@@ -14,7 +14,7 @@ import { h, Fragment, useLang, lang, loc, tr } from "./KorrI18n.tsx"
 void [h, Fragment]
 
 const API = "https://ktx-api.fly.dev"
-const IMG = "https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@e87f5174f751b60bb4873fd180eea45c3df05085/home/assets/"
+const IMG = "https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@32b4854ffa24b5a18d4d777203e51dd7de3b6b9d/home/assets/"
 const ACCENT = "#3FBF9F"
 const FONT =
     "https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap"
