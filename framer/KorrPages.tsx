@@ -4,7 +4,7 @@
 // KORR — pages du site (contenu repris de l'ancien site KTX, aux couleurs KORR).
 // Rendu par KorrPrivacy (KorrFooter.tsx) selon sa propriété « Page » : une page Framer = une instance.
 // Fichier volontairement long : il regroupe le contenu de 8 pages et leurs formulaires publics.
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import KorrNav from "./KorrNav.tsx"
 import KorrPlans from "./KorrPlans.tsx"
 import KorrFAQ from "./KorrFAQ.tsx"
@@ -1122,6 +1122,151 @@ function Reveal({ image, alt, eyebrow, title, text, flip }: { image: string; alt
 }
 
 /** Inséré par KorrBento, sur l'accueil seulement. */
+// ───── Film d'accueil (60 s, 8 scènes, narration FR/EN facultative) ─────
+
+type Bi = { fr: string; en: string }
+const FILM: { img: string; small: Bi; big: Bi; cap: Bi }[] = [
+    { img: "hero-v2.webp", small: { fr: "Chaque automne", en: "Every fall" }, big: { fr: "La même cohue.", en: "The same rush." }, cap: { fr: "Chaque automne, c’est la même course : trouver un garage avant le 1er décembre.", en: "Every fall, it’s the same race: finding a garage before December 1st." } },
+    { img: "garage-v2.webp", small: { fr: "KORR", en: "KORR" }, big: { fr: "Votre conciergerie automobile.", en: "Your automotive concierge." }, cap: { fr: "KORR, c’est votre conciergerie automobile. On s’occupe de vos pneus, toute l’année.", en: "KORR is your automotive concierge. We take care of your tires, all year long." } },
+    { img: "hero-v2.webp", small: { fr: "Dès l’inscription", en: "From sign-up" }, big: { fr: "1 interlocuteur. 2 créneaux.", en: "1 contact. 2 slots." }, cap: { fr: "Un seul interlocuteur : KORR. Dès l’inscription, vos deux créneaux de l’année sont réservés, printemps et automne.", en: "One point of contact: KORR. The day you sign up, both your slots for the year are booked, spring and fall." } },
+    { img: "qr-v2.webp", small: { fr: "Au garage partenaire", en: "At the partner garage" }, big: { fr: "Un scan. 0 $ sur place.", en: "One scan. $0 on site." }, cap: { fr: "Le jour venu, vous vous présentez chez un garage partenaire près de chez vous. Un scan de code QR, et c’est tout : rien à payer sur place.", en: "On the day, you drive to a partner garage near you. One QR code scan, and that’s it: nothing to pay on site." } },
+    { img: "storage-v2.webp", small: { fr: "Forfait Sérénité", en: "Serenity plan" }, big: { fr: "Vos pneus, gardés.", en: "Your tires, stored." }, cap: { fr: "Avec le forfait Sérénité, KORR garde vos pneus hors saison, suivis par code QR. Après chaque visite, vous recevez un rapport avec photos.", en: "With the Serenity plan, KORR stores your tires off-season, tracked by QR code. After every visit, you get a report with photos." } },
+    { img: "wheel-v2.webp", small: { fr: "Forfait Fin de bail", en: "End of Lease plan" }, big: { fr: "Jusqu’à 400 $ par jante.*", en: "Up to $400 per wheel.*" }, cap: { fr: "Vous êtes en location ? Au retour, une jante abîmée peut coûter jusqu’à 400 $. Le forfait Fin de bail documente l’état de vos roues, photos datées à l’appui.", en: "Leasing? At the end of your lease, one damaged wheel can cost up to $400. The End of Lease plan documents the condition of your wheels, with dated photos." } },
+    { img: "garage-v2.webp", small: { fr: "Toutes marques, tous modèles", en: "All makes, all models" }, big: { fr: "De Montréal à Vaudreuil-Soulanges.", en: "Montréal to Vaudreuil-Soulanges." }, cap: { fr: "Toutes marques, tous modèles, du centre-ville de Montréal jusqu’à Vaudreuil-Soulanges.", en: "All makes, all models, from downtown Montréal to Vaudreuil-Soulanges." } },
+    { img: "hero-v2.webp", small: { fr: "Lancement avril 2027", en: "Launching April 2027" }, big: { fr: "korrauto.com", en: "korrauto.com" }, cap: { fr: "Lancement en avril 2027. Inscrivez-vous à la liste d’attente sur korrauto.com.", en: "Launching April 2027. Join the waitlist at korrauto.com." } },
+]
+// Début de chaque scène dans la narration (secondes), puis la fin.
+const FILM_TS: Record<"fr" | "en", number[]> = {
+    fr: [0, 6.7, 13.55, 23.3, 35.3, 47.95, 62.25, 69.55, 78.4],
+    en: [0, 5.9, 12.5, 21.2, 30.8, 39.9, 53.45, 59.4, 67],
+}
+const FILM_AUDIO = { fr: IMG + "audio/korr-film-fr.mp3", en: IMG + "audio/korr-film-en.mp3" }
+const FILM_SHOTS = Array.from(new Set(FILM.map((s) => s.img)))
+
+function KorrFilm() {
+    const L = lang() === "en" ? "en" : "fr"
+    const box = useRef<HTMLDivElement>(null)
+    const audio = useRef<HTMLAudioElement | null>(null)
+    const [cur, setCur] = useState(0)
+    const [pct, setPct] = useState(0)
+    const [playing, setPlaying] = useState(true)
+    const [sound, setSound] = useState(false)
+    const clock = useRef(0)
+    const ts = FILM_TS[L]
+
+    useEffect(() => {
+        if (typeof window === "undefined") return
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setPlaying(false)
+        const a = new Audio()
+        a.preload = "none"
+        audio.current = a
+        return () => { a.pause(); a.src = "" }
+    }, [])
+
+    useEffect(() => {
+        const a = audio.current
+        if (!a || !sound) return
+        a.src = FILM_AUDIO[L]
+        a.currentTime = clock.current
+    }, [L, sound])
+
+    useEffect(() => {
+        let raf = 0
+        let t0 = performance.now()
+        const end = ts[ts.length - 1]
+        const loop = (now: number) => {
+            const r = box.current?.getBoundingClientRect()
+            const visible = !!r && r.bottom > innerHeight * 0.25 && r.top < innerHeight * 0.75 && !document.hidden
+            const run = playing && visible
+            const a = audio.current
+            if (sound && a) {
+                if (run) {
+                    if (a.paused) a.play().catch(() => {})
+                    if (!a.paused) clock.current = a.currentTime
+                    if (a.ended) { clock.current = 0; a.currentTime = 0 }
+                } else if (!a.paused) a.pause()
+            } else if (run) {
+                clock.current += (now - t0) / 1000
+                if (clock.current >= end) clock.current = 0
+            }
+            t0 = now
+            let k = 0
+            for (let i = ts.length - 2; i > 0; i--) if (clock.current >= ts[i]) { k = i; break }
+            setCur(k)
+            setPct(Math.max(0, Math.min(100, ((clock.current - ts[k]) / (ts[k + 1] - ts[k])) * 100)))
+            raf = requestAnimationFrame(loop)
+        }
+        raf = requestAnimationFrame(loop)
+        return () => cancelAnimationFrame(raf)
+    }, [playing, sound, L])
+
+    const go = (i: number) => {
+        clock.current = ts[i]
+        if (sound && audio.current) audio.current.currentTime = ts[i]
+        setCur(i)
+    }
+    const toggleSound = () => {
+        const a = audio.current
+        if (!a) return
+        if (sound) { a.pause(); setSound(false); return }
+        clock.current = 0
+        a.src = FILM_AUDIO[L]
+        a.currentTime = 0
+        a.play().catch(() => {})
+        setSound(true)
+        setPlaying(true)
+        setCur(0)
+    }
+    const sc = FILM[cur]
+    const btn = { height: 34, padding: "0 14px", borderRadius: 999, border: 0, background: "rgba(255,255,255,0.14)", backdropFilter: "blur(10px)", color: "#F5F5F7", font: "600 12px/1 Inter, sans-serif", letterSpacing: "0.08em", cursor: "pointer" }
+
+    return (
+        <section id="film" style={{ ...section(96), textAlign: "center" as const }}>
+            <style>{`@keyframes korrKb{from{transform:scale(1.02)}to{transform:scale(1.12)}}@media (prefers-reduced-motion: reduce){.korr-shot img{animation:none!important}}@media (max-width:600px){.korr-film{aspect-ratio:4/5!important;border-radius:16px!important}}`}</style>
+            <div style={wrap}>
+                <p style={eyebrowS}>Le film</p>
+                <h2 style={{ ...h2S, margin: 0 }}>KORR en une minute.</h2>
+            </div>
+            <div ref={box} className="korr-film" role="region" aria-label="Film KORR"
+                style={{ position: "relative", margin: "48px auto 0", maxWidth: 1200, aspectRatio: "16 / 9", borderRadius: 28, overflow: "hidden", background: "#000" }}>
+                {FILM_SHOTS.map((img) => (
+                    <div key={img} className="korr-shot" style={{ position: "absolute", inset: 0, opacity: sc.img === img ? 1 : 0, transition: "opacity 1.2s ease" }}>
+                        <img src={IMG + img} alt="" loading="lazy"
+                            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", animation: sc.img === img ? "korrKb 11s linear forwards" : "none" }} />
+                    </div>
+                ))}
+                <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,0.65)), linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0) 50%)" }} />
+                <div key={cur} style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 10, padding: "0 8% 10%", animation: "korrIn .9s cubic-bezier(.16,1,.3,1)" }}>
+                    <style>{`@keyframes korrIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}`}</style>
+                    <div style={{ font: "600 13px Inter, sans-serif", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: ACCENT }}>{sc.small[L]}</div>
+                    <div style={{ font: "600 clamp(28px, 5.4vw, 76px)/1.02 Inter, sans-serif", letterSpacing: "-0.04em", color: "#F5F5F7" }}>{sc.big[L]}</div>
+                </div>
+                <p aria-live="polite" style={{ position: "absolute", left: 0, right: 0, bottom: "clamp(40px, 5vw, 60px)", margin: 0, padding: "0 8%", font: "400 clamp(14px, 1.35vw, 19px)/1.45 Inter, sans-serif", color: "#F5F5F7", textShadow: "0 2px 12px rgba(0,0,0,0.9)" }}>{sc.cap[L]}</p>
+                <div style={{ position: "absolute", top: 16, right: 16, display: "flex", gap: 8 }}>
+                    <button type="button" aria-pressed={sound} onClick={toggleSound} style={{ ...btn, ...(sound ? {} : { background: ACCENT, color: "#06120E" }) }}>
+                        {sound ? (L === "en" ? "SOUND ON" : "SON ACTIVÉ") : L === "en" ? "TURN SOUND ON" : "ACTIVER LE SON"}
+                    </button>
+                    <button type="button" onClick={() => { if (playing) audio.current?.pause(); setPlaying(!playing) }} style={btn}>
+                        {playing ? "PAUSE" : L === "en" ? "PLAY" : "LECTURE"}
+                    </button>
+                </div>
+                <div style={{ position: "absolute", left: 20, right: 20, bottom: 18, display: "flex", gap: 6 }}>
+                    {FILM.map((_, i) => (
+                        <span key={i} role="button" tabIndex={0} aria-label={(L === "en" ? "Scene " : "Scène ") + (i + 1)} onClick={() => go(i)}
+                            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") go(i) }}
+                            style={{ flex: 1, height: 3, borderRadius: 2, background: "rgba(255,255,255,0.22)", overflow: "hidden", cursor: "pointer" }}>
+                            <i style={{ display: "block", height: "100%", background: "#F5F5F7", width: i < cur ? "100%" : i > cur ? "0%" : pct + "%" }} />
+                        </span>
+                    ))}
+                </div>
+            </div>
+            <p style={{ ...pS, maxWidth: 1200, margin: "16px auto 0", fontSize: 13, textAlign: "left" as const }}>
+                * Exemple tiré de la grille de frais de retour d’un constructeur allemand. KORR ne garantit pas l’absence de frais.
+            </p>
+        </section>
+    )
+}
+
 export function HomeExtras() {
     useLang()
     useInter()
@@ -1133,6 +1278,7 @@ export function HomeExtras() {
     ]
     return (
         <div style={{ width: "100%", background: "#050505", fontFamily: "Inter, sans-serif" }}>
+            <KorrFilm />
             <section style={section(64)}>
                 <div style={{ ...wrap, ...grid(220) }}>
                     {nums.map(([n, t]) => (

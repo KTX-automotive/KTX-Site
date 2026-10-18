@@ -543,6 +543,10 @@ const D: Record<string, string> = {
     // ── Images ──
     "Allée d’entrepôt de pneus, chaque ensemble étiqueté par code QR": "Tire warehouse aisle, each set labelled with a QR code",
     "Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont": "Partner garage technician torquing a wheel, car on the lift",
+    "Le film": "The film",
+    "KORR en une minute.": "KORR in a minute.",
+    "* Exemple tiré de la grille de frais de retour d’un constructeur allemand. KORR ne garantit pas l’absence de frais.": "* Example from a German automaker’s lease-return fee schedule. KORR does not guarantee you will avoid fees.",
+    "Film KORR": "KORR film",
     "Cliente et technicien validant un code QR au comptoir d’un garage partenaire": "Customer and technician validating a QR code at a partner garage counter",
     "Gros plan d’une jante en alliage photographiée au téléphone pour une estimation": "Close-up of an alloy wheel photographed with a phone for an estimate",
 }
