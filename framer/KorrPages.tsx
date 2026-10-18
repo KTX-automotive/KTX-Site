@@ -14,7 +14,7 @@ import { h, Fragment, useLang, lang, loc, tr } from "./KorrI18n.tsx"
 void [h, Fragment]
 
 const API = "https://ktx-api.fly.dev"
-const IMG = "https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@32b4854ffa24b5a18d4d777203e51dd7de3b6b9d/home/assets/"
+const IMG = "https://cdn.jsdelivr.net/gh/KTX-automotive/KTX-Site@ff2161d55c8d1feae688bc989a1794ca3a7aa6fc/home/assets/"
 const ACCENT = "#3FBF9F"
 const FONT =
     "https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..700&display=swap"
@@ -810,8 +810,8 @@ function Fonctionnement() {
     return (
         <>
             <Hero eyebrow="Comment ça marche" title="Un seul interlocuteur : KORR. Nos garages partenaires font le travail."
-                lead="KORR anticipe vos créneaux, garde vos pneus, coordonne le garage partenaire et documente chaque service." image="garage.webp"
-                alt="Garage partenaire au crépuscule, voiture sur le pont pendant un changement de pneus" />
+                lead="KORR anticipe vos créneaux, garde vos pneus, coordonne le garage partenaire et documente chaque service." image="garage-v2.webp"
+                alt="Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont" />
             <section style={section(48)}>
                 <div style={wrap}>
                     <Cards numbered items={[
@@ -833,7 +833,7 @@ function Fonctionnement() {
                         </div>
                         <p style={{ ...smallS, marginTop: 16 }}>Disponible pour les membres dès le lancement d’avril 2027.</p>
                     </div>
-                    <img src={IMG + "qr.webp"} alt="Téléphone affichant un code QR scanné au comptoir d’un garage" loading="lazy"
+                    <img src={IMG + "qr-v2.webp"} alt="Cliente et technicien validant un code QR au comptoir d’un garage partenaire" loading="lazy"
                         style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", borderRadius: 28, display: "block" }} />
                 </div>
                 <div style={{ ...wrap, marginTop: 40 }}>
@@ -918,7 +918,7 @@ function PneusEtMags() {
                     <div>
                         <Head id="estimation" eyebrow="Estimation photo" title="Une éraflure ? Envoyez une photo."
                             lead="Photographiez votre jante : nous classons le dommage et vous envoyons une fourchette de prix par jante, validée par KORR." />
-                        <img src={IMG + "wheel.webp"} alt="Gros plan d’une jante en alliage portant une éraflure de trottoir" loading="lazy"
+                        <img src={IMG + "wheel-v2.webp"} alt="Gros plan d’une jante en alliage photographiée au téléphone pour une estimation" loading="lazy"
                             style={{ width: "100%", aspectRatio: "16 / 10", objectFit: "cover", borderRadius: 24, display: "block", marginBottom: 20 }} />
                         <p style={smallS}>Fourchette indicative, avant taxes : le prix final est celui de la soumission écrite de l’atelier partenaire, après examen de la jante, et vous l’acceptez ou non avant tout travail. Une jante fissurée se remplace et ne se répare pas.</p>
                     </div>
@@ -946,7 +946,7 @@ function FinDeBail() {
         <>
             <Hero eyebrow="Forfait Fin de bail" title="Rendez votre véhicule avec un dossier complet."
                 lead="Les grilles de retour des loueurs facturent les dommages au véhicule : carrosserie, pare-brise, intérieur, jantes et pneus. KORR garde un historique daté pendant tout le bail, coordonne les réparations et vous laisse le temps d’agir avant l’inspection du loueur."
-                image="wheel.webp" alt="Gros plan d’une jante en alliage portant une éraflure de trottoir" />
+                image="wheel-v2.webp" alt="Gros plan d’une jante en alliage photographiée au téléphone pour une estimation" />
             <section style={section(32)}>
                 <div style={wrap}>
                     <Cards items={[
@@ -1005,7 +1005,7 @@ function Entreprises() {
         <>
             <Hero eyebrow="Entreprises et flottes" title="Toute la flotte, sans gérer un seul garage."
                 lead="Créneaux réservés par véhicule, entreposage, une seule facture et un rapport de conformité. Planifié hors des pointes d’octobre et d’avril."
-                image="storage.webp" alt="Allée d’entrepôt de pneus, chaque ensemble étiqueté par code QR" />
+                image="storage-v2.webp" alt="Allée d’entrepôt de pneus, chaque ensemble étiqueté par code QR" />
             <section style={section(32)}>
                 <div style={wrap}>
                     <Cards items={[
@@ -1026,7 +1026,7 @@ function Garages() {
         <>
             <Hero eyebrow="Vous êtes un garage ?" title="Des clients planifiés des semaines d’avance."
                 lead="KORR remplit vos plages disponibles avec des membres déjà réservés et vous paie le jour même. Vous faites ce que vous faites le mieux."
-                image="garage.webp" alt="Garage partenaire au crépuscule, voiture sur le pont pendant un changement de pneus" />
+                image="garage-v2.webp" alt="Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont" />
             <section style={section(32)}>
                 <div style={wrap}>
                     <Cards numbered items={[
@@ -1145,14 +1145,14 @@ export function HomeExtras() {
             </section>
             <section style={section(64)}>
                 <div style={{ ...wrap, display: "grid", gap: 96 }}>
-                    <Reveal image="storage.webp" alt="Allée d’entrepôt de pneus, chaque ensemble étiqueté par code QR" eyebrow="Entreposage suivi par code QR"
+                    <Reveal image="storage-v2.webp" alt="Allée d’entrepôt de pneus, chaque ensemble étiqueté par code QR" eyebrow="Entreposage suivi par code QR"
                         title="Vos pneus dorment ici." text="Lavés, étiquetés, rangés. Chaque entrée et chaque sortie est datée. Plus de pneus dans le garage ni sur le balcon du condo." />
-                    <Reveal flip image="garage.webp" alt="Garage partenaire au crépuscule, voiture sur le pont pendant un changement de pneus" eyebrow="Garages partenaires sélectionnés"
+                    <Reveal flip image="garage-v2.webp" alt="Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont" eyebrow="Garages partenaires sélectionnés"
                         title="Nos garages font le travail." text="Un réseau choisi du centre-ville de Montréal jusqu’à Vaudreuil-Soulanges. Votre créneau est bloqué bien avant novembre. KORR coordonne tout, vous arrivez à l’heure dite." />
-                    <Reveal image="qr.webp" alt="Téléphone affichant un code QR scanné au comptoir d’un garage" eyebrow="Validation par code QR"
+                    <Reveal image="qr-v2.webp" alt="Cliente et technicien validant un code QR au comptoir d’un garage partenaire" eyebrow="Validation par code QR"
                         title="Un scan. C’est réglé." text="Rien à payer sur place. Après la visite, votre rapport arrive sur votre téléphone : profondeur des pneus, photos datées, état des jantes." />
                     <div style={{ ...grid(320), gap: 48, alignItems: "center", direction: "rtl" }}>
-                        <img src={IMG + "wheel.webp"} alt="Gros plan d’une jante en alliage portant une éraflure de trottoir" loading="lazy"
+                        <img src={IMG + "wheel-v2.webp"} alt="Gros plan d’une jante en alliage photographiée au téléphone pour une estimation" loading="lazy"
                             style={{ width: "100%", aspectRatio: "16 / 10", objectFit: "cover", borderRadius: 28, display: "block" }} />
                         <div style={{ direction: "ltr" }}>
                             <p style={eyebrowS}>Forfait Fin de bail</p>

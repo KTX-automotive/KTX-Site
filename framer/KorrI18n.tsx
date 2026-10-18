@@ -542,9 +542,9 @@ const D: Record<string, string> = {
 
     // ── Images ──
     "Allée d’entrepôt de pneus, chaque ensemble étiqueté par code QR": "Tire warehouse aisle, each set labelled with a QR code",
-    "Garage partenaire au crépuscule, voiture sur le pont pendant un changement de pneus": "Partner garage at dusk, car on the lift during a tire change",
-    "Téléphone affichant un code QR scanné au comptoir d’un garage": "Phone showing a QR code scanned at a garage counter",
-    "Gros plan d’une jante en alliage portant une éraflure de trottoir": "Close-up of an alloy wheel with curb rash",
+    "Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont": "Partner garage technician torquing a wheel, car on the lift",
+    "Cliente et technicien validant un code QR au comptoir d’un garage partenaire": "Customer and technician validating a QR code at a partner garage counter",
+    "Gros plan d’une jante en alliage photographiée au téléphone pour une estimation": "Close-up of an alloy wheel photographed with a phone for an estimate",
 }
 
 // Textes calculés (nombres, codes, dates) : expressions régulières.
