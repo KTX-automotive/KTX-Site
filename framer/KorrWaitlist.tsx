@@ -133,7 +133,7 @@ export function MemberOffer() {
                     Membre exclusif · 200 places
                 </div>
                 <div style={{ font: "600 22px/1.2 Inter, sans-serif", color: "#F5F5F7", marginBottom: 14 }}>
-                    Réservé aux 200 premiers inscrits.
+                    Réservé aux 200 premiers à compléter leur parrainage.
                 </div>
                 <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "grid", gap: 8 }}>
                     {check("Accès prioritaire à la prévente de mars 2027")}
@@ -145,16 +145,16 @@ export function MemberOffer() {
                 <div style={{ font: "600 15px Inter, sans-serif", color: "#F5F5F7", marginBottom: 10 }}>Pour obtenir le statut</div>
                 <ol style={{ margin: 0, paddingLeft: 20, display: "grid", gap: 8, font: "400 15px/1.5 Inter, sans-serif", color: "#D2D2D7" }}>
                     <li>Adhérer à la prévente de mars 2027</li>
-                    <li>Parrainer 2 personnes qui s’inscrivent à la liste d’attente (obligatoire)</li>
+                    <li>Parrainer 2 personnes qui s’inscrivent et confirment leur courriel (obligatoire)</li>
                 </ol>
                 <p style={{ ...small, marginTop: 12 }}>
-                    Votre lien de parrainage personnel arrive par courriel après votre inscription. Un paiement manqué ou un abonnement en pause retire automatiquement le statut : la place passe au suivant sur la liste.
+                    Votre lien de parrainage personnel arrive par courriel après votre inscription. Dès que vos 2 filleuls ont confirmé leur courriel, vous recevez votre numéro de place, de 1 à 200. Un paiement manqué ou un abonnement en pause retire automatiquement le statut : la place passe à la première personne de la liste d’attente.
                 </p>
             </div>
             <div style={card}>
                 <div style={{ font: "600 15px Inter, sans-serif", color: "#F5F5F7", marginBottom: 10 }}>Les 200 places sont prises ?</div>
                 <p style={{ margin: 0, font: "400 15px/1.5 Inter, sans-serif", color: "#D2D2D7" }}>
-                    Inscrivez-vous quand même : vous entrez sur la liste d’attente de la clientèle premium. Chaque place qui se libère est offerte à la personne suivante, dans l’ordre d’inscription.
+                    Complétez quand même votre parrainage : vous entrez sur la liste d’attente et recevez votre position par courriel. Chaque place qui se libère revient automatiquement à la première personne de la liste.
                 </p>
             </div>
         </div>
