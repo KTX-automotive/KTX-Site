@@ -692,7 +692,7 @@ function PartnerForm() {
         setBusy(true)
         setStatus(null)
         try {
-            await post("/v1/partners/applications", { ...f, baies: f.baies || undefined, source: "korrauto.com/garages", consentement: ok ? "oui" : "", texte_consentement: tr(consentText), langue: lang(), website: hp })
+            await post("/v1/partners/applications", { ...f, baies: f.baies || undefined, source: "korrauto.com/partenaires", consentement: ok ? "oui" : "", texte_consentement: tr(consentText), langue: lang(), website: hp })
             setStatus({ ok: true, msg: "Candidature reçue. Nous vous écrirons avant l’évaluation de décembre 2026." })
         } catch (err: any) {
             setStatus({ msg: err.message })
@@ -1028,7 +1028,7 @@ function Entreprises() {
 function Garages() {
     return (
         <>
-            <Hero eyebrow="Vous êtes un garage ?" title="Des clients planifiés des semaines d’avance."
+            <Hero eyebrow="Partenaires KORR" title="Des clients planifiés des semaines d’avance."
                 lead="KORR remplit vos plages disponibles avec des membres déjà réservés et vous paie le jour même. Vous faites ce que vous faites le mieux."
                 image="garage-v3.webp" alt="Technicien d’un garage partenaire serrant les écrous d’une roue, voiture sur le pont" />
             <section style={section(32)}>
@@ -1043,8 +1043,8 @@ function Garages() {
             </section>
             <section style={section()}>
                 <div style={{ ...wrap, ...grid(340), gap: 48, alignItems: "start" }}>
-                    <Head id="partenaire" eyebrow="Rejoignez le réseau" title="Devenir garage partenaire."
-                        lead="Nous sélectionnons quelques garages indépendants et réseaux partenaires par secteur, du centre-ville de Montréal jusqu’à Vaudreuil-Soulanges. Les candidatures sont évaluées en décembre 2026." />
+                    <Head id="partenaire" eyebrow="Rejoignez le réseau" title="Devenir partenaire."
+                        lead="Nous sélectionnons quelques partenaires par secteur : garages indépendants, concessionnaires, ateliers de jantes, esthétique automobile et autres entreprises de l’automobile, du centre-ville de Montréal jusqu’à Vaudreuil-Soulanges. Les candidatures sont évaluées en décembre 2026." />
                     <PartnerForm />
                 </div>
             </section>
