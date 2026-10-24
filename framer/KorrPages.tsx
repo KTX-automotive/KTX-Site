@@ -26,6 +26,7 @@ export const PAGES = [
     "fin-de-bail",
     "entreprises",
     "garages",
+    "trace",
     "faq",
     "liste-attente",
 ] as const
@@ -644,21 +645,24 @@ function VerifyForm() {
     }, [])
     const submit = async (e: any) => {
         e.preventDefault()
-        const c = code.trim().toUpperCase().replace(/^R(?!-)/, "R-")
-        if (!/^R-[A-HJ-NP-Z2-9]{10}$/.test(c)) return setRes({ ok: false, msg: "Code invalide. Il ressemble à R-ABCD234EFG." })
+        const c = code.trim().toUpperCase().replace(/^([RT])(?!-)/, "$1-")
+        if (!/^[RT]-[A-HJ-NP-Z2-9]{10}$/.test(c)) return setRes({ ok: false, msg: "Code invalide. Il ressemble à T-ABCD234EFG ou R-ABCD234EFG." })
         setBusy(true)
         try {
-            const r = await fetch(`${API}/v1/reports/${c}`)
+            // T-… : rapport Trace ; R-… : rapport du diagnostic fin de bail.
+            const trace = c.startsWith("T-")
+            const r = await fetch(`${API}/v1/${trace ? "trace" : "reports"}/${c}`)
             if (r.status === 404) return setRes({ ok: false, msg: "Aucun rapport ne correspond à ce code." })
             if (!r.ok) throw new Error()
             const d = await r.json()
-            const when = d.createdAt ? new Date(d.createdAt).toLocaleDateString(lang() === "en" ? "en-CA" : "fr-CA", { day: "numeric", month: "long", year: "numeric" }) : ""
-            const veh = [d.make, d.model, d.year].filter(Boolean).join(" ")
-            setRes(
-                d.verified
-                    ? { ok: true, msg: `Rapport authentique${when ? ` du ${when}` : ""}${veh ? ` · ${veh}` : ""}. Son contenu n’a pas été modifié.` }
-                    : { ok: false, msg: "Ce rapport existe, mais son contenu ne correspond plus à l’original." }
-            )
+            const at = trace ? d.issuedAt : d.createdAt
+            const when = at ? new Date(at).toLocaleDateString(lang() === "en" ? "en-CA" : "fr-CA", { day: "numeric", month: "long", year: "numeric" }) : ""
+            const v = trace ? d.vehicle || {} : d
+            const veh = [v.make, v.model, v.year].filter(Boolean).join(" ")
+            if (!d.verified) return setRes({ ok: false, msg: "Ce rapport existe, mais son contenu ne correspond plus à l’original." })
+            if (trace && d.status === "revoked") return setRes({ ok: false, msg: "Ce rapport Trace a été annulé par KORR." })
+            const newer = trace && d.status === "superseded" ? " Un rapport plus récent existe pour ce véhicule." : ""
+            setRes({ ok: true, msg: `Rapport authentique${when ? ` du ${when}` : ""}${veh ? ` · ${veh}` : ""}. Son contenu n’a pas été modifié.${newer}` })
         } catch {
             setRes({ ok: false, msg: "Vérification indisponible pour le moment, réessayez plus tard." })
         } finally {
@@ -668,7 +672,7 @@ function VerifyForm() {
     return (
         <form onSubmit={submit} style={{ ...card, display: "grid", gap: 14 }}>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <input aria-label="Code du rapport" placeholder="R-XXXXXXXXXX" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())}
+                <input aria-label="Code du rapport" placeholder="T-XXXXXXXXXX" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())}
                     style={{ ...fieldS, flex: "1 1 220px", width: "auto", letterSpacing: "0.06em" }} />
                 <button type="submit" disabled={busy} style={{ ...btn(), border: "none" }}>{busy ? "…" : "Vérifier"}</button>
             </div>
@@ -823,7 +827,7 @@ function Fonctionnement() {
                             lead="Après chaque visite, vous recevez votre rapport Trace : l’état de vos pneus et de vos jantes, mesuré et photographié au garage partenaire, avec un code QR que n’importe qui peut vérifier." />
                         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                             <a href="#liste-attente" style={btn()}>Rejoindre la liste d’attente</a>
-                            <a href="/fin-de-bail#verifier" style={btn(false)}>Vérifier un rapport</a>
+                            <a href={loc("/trace#verifier")} style={btn(false)}>Vérifier un rapport</a>
                         </div>
                         <p style={{ ...smallS, marginTop: 16 }}>Disponible pour les membres dès le lancement d’avril 2027.</p>
                     </div>
@@ -996,7 +1000,7 @@ function FinDeBail() {
                     <div style={{ ...card, marginTop: 32 }}>
                         <p style={eyebrowS}>Trace</p>
                         <p style={{ ...pS, color: "#D2D2D7" }}>Chaque visite produit un rapport daté, vérifiable par code QR.</p>
-                        <a href={loc("/fonctionnement#trace")} style={{ display: "inline-block", marginTop: 12, color: ACCENT, font: "600 15px Inter, sans-serif", textDecoration: "none" }}>Voir comment →</a>
+                        <a href={loc("/trace")} style={{ display: "inline-block", marginTop: 12, color: ACCENT, font: "600 15px Inter, sans-serif", textDecoration: "none" }}>Voir comment →</a>
                     </div>
                 </div>
             </section>
@@ -1048,6 +1052,49 @@ function Garages() {
                     <PartnerForm />
                 </div>
             </section>
+        </>
+    )
+}
+
+// ───── Trace : rapport officiel du véhicule ─────
+// Wording imposé : « rapport daté », jamais « certifié » ; ni garantie, ni assurance (contenu : KTX-Backend, docs/korr-trace.md).
+
+function Trace() {
+    return (
+        <>
+            <Hero eyebrow="Trace" title="Le rapport officiel de votre véhicule."
+                lead="Après chaque visite chez un garage partenaire, Trace consigne l’état de vos pneus, de vos jantes et de vos freins. Un rapport daté, que n’importe qui peut vérifier avec son code."
+                image="qr.webp" alt="Code QR affiché sur un téléphone, scanné au comptoir d’un garage partenaire" />
+            <section style={section(32)}>
+                <div style={wrap}>
+                    <Head eyebrow="Ce que contient Trace" title="Tout ce que le garage a mesuré, au même endroit." />
+                    <Cards numbered items={[
+                        ["Pneus mesurés", "L’usure de chaque pneu, roue par roue, relevée à chaque visite, avec un niveau clair : bon, à surveiller ou à remplacer bientôt."],
+                        ["Freins et serrage", "L’état des freins et le serrage des roues, inscrits par le garage partenaire."],
+                        ["Constats du garage", "Chaque point relevé, par roue et par gravité : à noter, recommandé ou urgent."],
+                        ["Historique des services", "Les dates de vos changements de pneus, saison par saison, et vos ensembles de pneus entreposés."],
+                        ["Photos datées", "Les photos prises au garage sont scellées par une empreinte numérique : toute modification se voit."],
+                    ]} />
+                </div>
+            </section>
+            <section style={section()}>
+                <div style={{ ...wrap, ...grid(320), gap: 48, alignItems: "start" }}>
+                    <Head id="verifier" eyebrow="Vérifier un rapport" title="Un rapport Trace se vérifie en quelques secondes."
+                        lead="Entrez le code inscrit sur le rapport (T-…) pour confirmer qu’il est authentique, qu’il n’a pas été modifié et qu’il est le plus récent pour ce véhicule. Les codes R-… du diagnostic fin de bail fonctionnent aussi." />
+                    <VerifyForm />
+                </div>
+            </section>
+            <section style={section(32)}>
+                <div style={wrap}>
+                    <Cards items={[
+                        ["Pour la revente", "L’acheteur de votre véhicule vérifie lui-même l’historique, sans vous croire sur parole."],
+                        ["Pour la fin de bail", "Un historique daté de l’état de vos jantes et de vos pneus pendant tout le bail."],
+                        ["Aucun renseignement personnel", "Ni nom, ni courriel, ni plaque. Le numéro de série du véhicule est réduit à ses 6 derniers caractères."],
+                    ]} />
+                    <p style={{ ...smallS, marginTop: 24 }}>Trace est un rapport daté établi à partir des dossiers de KORR. Ce n’est ni une certification, ni une garantie, ni un produit d’assurance, et il ne remplace pas une inspection mécanique complète.</p>
+                </div>
+            </section>
+            <Band title="Trace arrive avec le lancement." text="Offert aux membres dès avril 2027. Inscrivez-vous à la liste d’attente pour être averti en premier." />
         </>
     )
 }
@@ -1263,6 +1310,7 @@ const RENDER: Record<PageKey, () => any> = {
     "fin-de-bail": FinDeBail,
     entreprises: Entreprises,
     garages: Garages,
+    trace: Trace,
     faq: Faq,
     "liste-attente": ListeAttente,
 }
