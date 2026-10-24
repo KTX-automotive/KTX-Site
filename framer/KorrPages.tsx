@@ -1287,7 +1287,8 @@ export function KorrPageContent({ page }: { page: PageKey }) {
             <main>
                 <Body />
             </main>
-            <KorrWaitlist />
+            {/* La page Partenaires s'adresse aux entreprises : pas de liste d'attente (clients) en bas de page. */}
+            {page !== "garages" && <KorrWaitlist />}
         </div>
     )
 }
