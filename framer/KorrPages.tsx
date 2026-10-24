@@ -819,8 +819,8 @@ function Fonctionnement() {
             <section style={section()}>
                 <div style={{ ...wrap, ...grid(320), gap: 48, alignItems: "center" }}>
                     <div>
-                        <Head id="korr-trace" eyebrow="KORR Trace" title="Chaque visite laisse une trace. Datée, mesurée, vérifiable."
-                            lead="Après chaque visite, vous recevez votre rapport KORR Trace : l’état de vos pneus et de vos jantes, mesuré et photographié au garage partenaire, avec un code QR que n’importe qui peut vérifier." />
+                        <Head id="trace" eyebrow="Trace" title="Chaque visite laisse une trace. Datée, mesurée, vérifiable."
+                            lead="Après chaque visite, vous recevez votre rapport Trace : l’état de vos pneus et de vos jantes, mesuré et photographié au garage partenaire, avec un code QR que n’importe qui peut vérifier." />
                         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                             <a href="#liste-attente" style={btn()}>Rejoindre la liste d’attente</a>
                             <a href="/fin-de-bail#verifier" style={btn(false)}>Vérifier un rapport</a>
@@ -994,9 +994,9 @@ function FinDeBail() {
                         lead="Entrez le code inscrit sur le rapport pour confirmer qu’il est authentique. Aucun renseignement personnel n’est affiché." />
                     <VerifyForm />
                     <div style={{ ...card, marginTop: 32 }}>
-                        <p style={eyebrowS}>KORR Trace</p>
+                        <p style={eyebrowS}>Trace</p>
                         <p style={{ ...pS, color: "#D2D2D7" }}>Chaque visite produit un rapport daté, vérifiable par code QR.</p>
-                        <a href={loc("/fonctionnement#korr-trace")} style={{ display: "inline-block", marginTop: 12, color: ACCENT, font: "600 15px Inter, sans-serif", textDecoration: "none" }}>Voir comment →</a>
+                        <a href={loc("/fonctionnement#trace")} style={{ display: "inline-block", marginTop: 12, color: ACCENT, font: "600 15px Inter, sans-serif", textDecoration: "none" }}>Voir comment →</a>
                     </div>
                 </div>
             </section>
